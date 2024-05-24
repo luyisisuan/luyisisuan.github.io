@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <link rel="icon" href="../图片/wechat.png" type="image/png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实践网站</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+</head>
+
+<style>
+    @media (min-width: 768px) {
+        .news-input {
+            width: 50%;
+        }
+    }
+    /* 这是一个媒体查询，当屏幕宽度大于768px时，输入框的宽度为50% */
+
+    body::before{
+        display: block;
+        content: '';
+        height: 56px;
+    }
+    /* 这是一个伪元素，用来占位，使得footer不会被遮挡 */
+
+</style>
+
+<body>
+
+    <!-- 背景音频 -->
+    <audio src="../音频/MEMORIES!.mp3" class="audio" autoplay loop></audio>
+
+    <nav class="navbar navbar-expand-lg bg-dark navbar-dark fixed-top">
+        <div class="container">
+            <a href="#" class="navbar-brand">导航栏</a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navmenu">
+                <span class="navbar-toggler-icon"></span>
+            </button><!-- 这个按钮是用来在小屏幕上显示的，点击后会显示导航栏的内容 -->
+
+            <div class="collapse navbar-collapse" id=navmenu>
+                <ul class="navbar-nav ms-auto">
+                    <!-- ms-auto是将元素向右移动 -->
+                    <li class="nav-item"><a href="#" class="nav-link">你好呀</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">别点我</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">说了别点了！</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- 这是一个导航栏 -->
+
+    <section class="p-5 bg-dark text-light text-center text-sm-start">
+        <!-- p-5是padding为5的意思 bg-dark是背景颜色为黑色 text-light是字体颜色为白色 text-center是居中 text-sm-start是在小屏幕以上左对齐 -->
+        <div class="container">
+            <!-- container是一个类，用来包裹内容，使内容居中 -->
+            <div class="d-flex">
+                <!-- d-flex是弹性盒子flex布局 -->
+                <div>
+                    <h1>成为一个<span class="text-warning">前端工程师</span></h1>
+                    <p class="my-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex, ratione. Doloribus,
+                        iure exercitationem facilis maiores distinctio iste cupiditate aspernatur quibusdam dolore
+                        laudantium corporis iusto et deleniti, voluptatum placeat qui quod!
+                    </p><!-- my-4是margin-top和margin-bottom都是4 -->
+
+                    <button class="btn btn-primary btn-lg">开启前端之旅</button>
+                </div>
+                <img src="../图片/github.svg" alt="showcase" class="w-50 d-none d-md-block">
+                <!-- w-50是宽度50% d-none是隐藏 d-md-block是在中等屏幕以上显示 -->
+            </div>
+        </div>
+    </section>
+    <!-- 这是一个主页的栏 -->
+
+    <section class="p-5 bg-primary text-light">
+        <div class="container">
+            <div class="d-md-flex justify-content-between align-items-center">
+                <h3>快来注册一个账号来玩耍吧！</h3>
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="请输入邮箱">
+                    <button class="btn btn-dark btn-lg">注册</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- 这是一个注册栏 -->
+
+    <section class="p-5">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md ">
+                    <div class="card bg-dark text-light">
+                        <div class="card-body text-center ">
+                            <div class="card-title">
+                                前端知识
+                            </div>
+                            <div class="card-text">
+                                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Culpa soluta aspernatur
+                                praesentium.
+                            </div>
+                            <a href="#" class="btn btn-primary btn-sm mt-2">查看更多</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md">
+                    <div class="card bg-secondary text-light">
+                        <div class="card-body text-center">
+                            <div class="card-title">
+                                后端知识
+                            </div>
+
+                            <div class="card-text">
+                                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Culpa soluta aspernatur
+                                praesentium.
+                            </div>
+                            <a href="#" class="btn btn-dark btn-sm  mt-2">查看更多</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md">
+                    <div class="card bg-dark text-light">
+                        <div class="card-body text-center">
+                            <div class="card-title">
+                                全栈知识
+                            </div>
+                            <div class="card-text">
+                                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Culpa soluta aspernatur
+                                praesentium.
+                            </div>
+                            <a href="#" class="btn btn-primary btn-sm mt-2 ">查看更多</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </section>
+    <!-- 这是一个卡片栏 -->
+
+    <section class="p-5">
+        <div class="container">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-md">
+                    <img src="../图片/amd.svg" alt="1" class="img-fluid w-50">
+                </div>
+                <div class="col-md p-5">
+                    <h2>课程设计</h2>
+                    <p class="lead">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Assumenda voluptas
+                        repellat recusandae quis
+                    </p>
+                    <p>
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt iste optio quibusdam harum ab!
+                        Dolorem adipisci a atque corrupti aperiam vel, recusandae libero?
+                    </p>
+                    <a href="#" class="button btn btn-primary">查看更多</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- 这是一个课程设计栏 -->
+
+    <section class="p-5 bg-dark text-light">
+        <div class="container">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-md p-5">
+                    <h2>课程设计</h2>
+                    <p class="lead">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Assumenda voluptas
+                        repellat recusandae quis
+                    </p>
+                    <p>
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt iste optio quibusdam harum ab!
+                        Dolorem adipisci a atque corrupti aperiam vel, recusandae libero?
+                    </p>
+                    <a href="#" class="button btn btn-light">查看更多</a>
+                </div>
+                <div class="col-md">
+                    <img src="../图片/wechat.svg" alt="1" class="img-fluid w-50">
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- 这是一个课程设计栏 -->
+
+    <section class="p-5">
+        <div class="container">
+            <h2 class="text-center mb-4">常见问题</h2>
+            <!-- 第一个问题 -->
+            <div class="accordion" id="accordionExample">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            问题一
+                        </button>
+                    </h2>
+                    <!-- 第一个折叠面板 -->
+                    <div id="collapseOne" class="accordion-collapse collapse " aria-labelledby="headingOne"
+                        data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            Lorem ipsum dolor sit amet <span class="text-warning">大笨蛋!</span> adipisicing elit
+                        </div>
+                    </div>
+                </div>
+                <!-- 注意这里的关闭标签 -->
+            </div>
+            <!-- 第二个问题 -->
+            <div class="accordion" id="accordionExample">
+                <div class="accordion-item"> <!-- 这里应该是一个独立的accordion-item -->
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                            问题二
+                        </button>
+                    </h2>
+                    <!-- 第二个折叠面板 -->
+                    <div id="collapseTwo" class="accordion-collapse collapse " aria-labelledby="headingTwo"
+                        data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            Lorem ipsum dolor sit amet <span class="text-warning">看这里!</span>consectetur adipisicing
+                            elit
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- 这是一个常见问题栏 -->
+
+    <section class="p-5 bg-primary">
+        <div class="container">
+            <h2 class="lead text-center text-light mb-4">
+                讲师介绍
+            </h2>
+            <P class="lead text-center text-light mb-4">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit
+            </P>
+            <div class="row g-4">
+                <div class="col-md">
+                    <div class="card bg-light text-dark">
+                        <div class="card-body  text-center">
+                            <img src="../图片/段绪程.jpg" alt="1" class="img-fluid rounded-circle mb-3"
+                                style="width: 150px; height: 150px; object-fit: cover;">
+                            <h3>段绪程</h3>
+                            <p>前端工程师</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="card bg-light text-dark">
+                        <div class="card-body text-center">
+                            <img src="../图片/胡颜阳.jpg" alt="1" class="img-fluid w-50 rounded-circle mb-3"
+                                style="width: 150px; height: 150px; object-fit: cover;">
+                            <h3>胡颜阳</h3>
+                            <p>后端工程师</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="card bg-light text-dark">
+                        <div class="card-body text-center">
+                            <img src="../图片/android2.svg" alt="1" class="img-fluid w-50 rounded-circle mb-3"
+                                style="width: 150px; height: 150px; object-fit: cover;">
+                            <h3>王五</h3>
+                            <p>全栈工程师</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- 这是一个讲师介绍栏 -->
+
+
+    <section class="p-5 bg-light text-dark">
+        <div class="container">
+            <h2 class="text-center mb-4">联系我们</h2>
+            <div class="row g-4">
+                <div class="col-md">
+                    <div class="card bg-dark text-light p-4">
+                        <div class="card-body">
+                            <h3>联系方式</h3>
+                            <p>电话：155570823605</p>
+                            <p>邮箱：2253864680@qq.com</p>
+                            <p>地址：湖南省长沙市中南林业科技大学</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- 这是一个联系栏 -->
+
+
+    <footer class="p-5 bg-dark text-light text-center">
+        <div class="container">
+            <p>版权所有 &copy; 20223535@csuft.edu.cn</p>
+        </div>
+    </footer>
+    <!-- 这是一个页脚 -->
+
+
+
+    <script src=" https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
+        </script>
+</body>
