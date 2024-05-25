@@ -1,3 +1,6 @@
 [submodule "网站/luyisisuan.github.io"]
 	path = 网站/luyisisuan.github.io
 	url = https://github.com/luyisisuan/luyisisuan.github.io
+[submodule "网站/网站/luyisisuan.github.io"]
+	path = 网站/网站/luyisisuan.github.io
+	url = https://github.com/luyisisuan/luyisisuan.github.io
