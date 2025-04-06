@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电影收藏馆 | 高级数据可视化</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --secondary: #3f37c9;
+            --dark: #1b263b;
+            --light: #f8f9fa;
+            --gray: #e9ecef;
+            --glass: rgba(255, 255, 255, 0.2);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 标题样式 */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.6s forwards 0.2s;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: var(--dark);
+            opacity: 0.8;
+        }
+
+        .movie-count {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* 卡片样式 */
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: var(--transition);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(31, 38, 135, 0.15);
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+        }
+
+        .card h2 svg {
+            margin-right: 0.8rem;
+            width: 24px;
+            height: 24px;
+            fill: var(--primary);
+        }
+
+        /* 表单样式 */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            background: var(--glass);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* 按钮样式 */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: rgba(67, 97, 238, 0.1);
+        }
+
+        .btn svg {
+            margin-right: 0.5rem;
+            width: 18px;
+            height: 18px;
+        }
+
+        /* 电影列表 */
+        .movie-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .movie-item {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .movie-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(31, 38, 135, 0.15);
+        }
+
+        .movie-poster {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .movie-content {
+            padding: 1.5rem;
+        }
+
+        .movie-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .movie-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: var(--dark);
+            opacity: 0.8;
+        }
+
+        .movie-meta span {
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .movie-meta svg {
+            margin-right: 0.3rem;
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
+
+        .movie-rating {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .movie-review {
+            margin-top: 1rem;
+            font-size: 0.95rem;
+            color: var(--dark);
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .movie-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .movie-date {
+            font-size: 0.8rem;
+            color: var(--dark);
+            opacity: 0.6;
+        }
+
+        /* CSV导入区域 */
+        .csv-upload {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .file-name {
+            margin-left: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--dark);
+            opacity: 0.8;
+        }
+
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            font-size: 0.9rem;
+            color: var(--dark);
+            opacity: 0.6;
+        }
+
+        /* 动画 */
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 复选框样式 */
+        .checkbox-container {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .checkbox-input {
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+        }
+
+        .select-all-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .movie-actions-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        /* 分页样式 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 2rem;
+            gap: 1rem;
+            position: sticky;
+            bottom: 2rem;
+            background: var(--glass);
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .pagination-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .pagination-info {
+            font-size: 0.9rem;
+            color: var(--dark);
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .movie-list {
+                grid-template-columns: 1fr;
+            }
+
+            .movie-actions-bar {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .pagination {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+
+        /* 图标 */
+        .icon {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+        }
+    </style>
+    <!-- 编辑电影模态框 -->
+    <style>
+        /* 模态框样式 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-container {
+            background: var(--light);
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            border-radius: 12px;
+            overflow-y: auto;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.active .modal-container {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray);
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin: 0;
+        }
+        
+        .modal-close {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--dark);
+            opacity: 0.7;
+            transition: var(--transition);
+        }
+        
+        .modal-close:hover {
+            opacity: 1;
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--gray);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>电影收藏馆</h1>
+            <p>已收藏 <span class="movie-count" id="movieCount">0</span> 部电影</p>
+        </header>
+
+        <main>
+            <section class="card" style="animation-delay: 0.3s">
+                <h2>
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z"/>
+                        <path d="M7 12h2v5H7zm4-7h2v12h-2zm4 4h2v8h-2z"/>
+                    </svg>
+                    CSV导入电影
+                </h2>
+                <div class="csv-upload">
+                    <input type="file" id="fileInput" class="file-input" accept=".csv">
+                    <label for="fileInput" class="btn btn-outline file-label">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                        </svg>
+                        选择CSV文件
+                    </label>
+                    <span id="fileName" class="file-name">未选择文件</span>
+                    <button class="btn btn-primary" onclick="importCSV()">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M5 20h14v-2H5v2zm0-10h4V6h6v4h4l-7 7-7-7z"/>
+                        </svg>
+                        开始导入
+                    </button>
+                </div>
+                <small>支持格式：电影/电视剧/番组,个人评分,打分日期,我的短评,上映日期,制片国家,条目链接（UTF-8编码）</small>
+            </section>
+
+            <section class="card" style="animation-delay: 0.4s">
+                <h2>
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                    </svg>
+                    添加新电影
+                </h2>
+                <form id="addMovieForm" onsubmit="return addMovie(event)">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="title">电影/电视剧/番组</label>
+                            <input type="text" id="title" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="director">导演</label>
+                            <input type="text" id="director" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="year">上映年份</label>
+                            <input type="number" id="year" class="form-control" min="1900" max="2099">
+                        </div>
+                        <div class="form-group">
+                            <label for="rating">个人评分（1-10）</label>
+                            <input type="number" id="rating" class="form-control" min="0" max="10" step="0.1">
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="ratingDate">打分日期</label>
+                            <input type="date" id="ratingDate" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="country">制片国家</label>
+                            <input type="text" id="country" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="link">条目链接</label>
+                            <input type="url" id="link" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="coverUrl">海报URL</label>
+                            <input type="url" id="coverUrl" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="review">我的短评</label>
+                        <textarea id="review" class="form-control" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
+                        </svg>
+                        添加电影
+                    </button>
+                </form>
+            </section>
+
+            <section class="card" style="animation-delay: 0.5s">
+                <h2>
+                    <svg viewBox="0 0 24 24">
+                        <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8 12.5v-9l6 4.5-6 4.5z"/>
+                    </svg>
+                    我的电影收藏
+                </h2>
+                <div class="movie-actions-bar">
+                    <div class="select-all-container">
+                        <input type="checkbox" id="selectAll" class="checkbox-input">
+                        <label for="selectAll">全选</label>
+                    </div>
+                    <button class="btn btn-outline" id="deleteSelectedBtn" style="display:none;">
+                        <svg viewBox="0 0 24 24" width="14" height="14">
+                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                        </svg>
+                        删除选中
+                    </button>
+                </div>
+                <div class="movie-list" id="movieList"></div>
+                <div class="pagination" id="pagination">
+                    <button class="btn btn-outline pagination-btn" id="prevPage" disabled>
+                        <svg viewBox="0 0 24 24" width="14" height="14">
+                            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                        </svg>
+                        上一页
+                    </button>
+                    <div class="pagination-info">
+                        第 <span id="currentPage">1</span> 页，共 <span id="totalPages">1</span> 页
+                    </div>
+                    <div class="pagination-jump" style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="number" id="jumpPage" class="form-control" style="width: 60px; padding: 0.3rem;" min="1" placeholder="页码">
+                        <button class="btn btn-outline pagination-btn" onclick="jumpToPage()" style="padding: 0.3rem 0.8rem;">
+                            跳转
+                        </button>
+                    </div>
+                    <button class="btn btn-outline pagination-btn" id="nextPage" disabled>
+                        下一页
+                        <svg viewBox="0 0 24 24" width="14" height="14">
+                            <path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/>
+                        </svg>
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>更新于 <span id="currentDate"></span> | 网页由问小白生成，仅供参考 | wenxiaobai.com</p>
+        </footer>
+    </div>
+    
+    <!-- 编辑电影模态框 -->
+    <div class="modal-overlay" id="editMovieModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="modal-title">编辑电影</h3>
+                <button class="modal-close" onclick="closeEditModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editMovieForm">
+                    <input type="hidden" id="editMovieId">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="editTitle">电影/电视剧/番组</label>
+                            <input type="text" id="editTitle" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editDirector">导演</label>
+                            <input type="text" id="editDirector" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="editYear">上映年份</label>
+                            <input type="number" id="editYear" class="form-control" min="1900" max="2099">
+                        </div>
+                        <div class="form-group">
+                            <label for="editRating">个人评分（1-10）</label>
+                            <input type="number" id="editRating" class="form-control" min="0" max="10" step="0.1">
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="editRatingDate">打分日期</label>
+                            <input type="date" id="editRatingDate" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="editCountry">制片国家</label>
+                            <input type="text" id="editCountry" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="editLink">条目链接</label>
+                            <input type="url" id="editLink" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="editCoverUrl">海报URL</label>
+                            <input type="url" id="editCoverUrl" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="editReview">我的短评</label>
+                        <textarea id="editReview" class="form-control" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeEditModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveMovieEdit()">保存修改</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 初始化存储
+        function initStorage() {
+            if (!localStorage.getItem('movies')) {
+                localStorage.setItem('movies', JSON.stringify([]));
+            }
+        }
+
+        // CSV处理
+        function parseCSV(csvText) {
+            const rows = csvText.split('\n').filter(row => row.trim() !== '');
+            const headers = rows[0].split(',').map(h => h.trim().replace(/"/g, ''));
+            
+            return rows.slice(1).map(row => {
+                const columns = row.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/);
+                const movie = {};
+                headers.forEach((header, index) => {
+                    let value = columns[index] ? columns[index].trim().replace(/^"(.*)"$/, '$1') : '';
+                    switch(header) {
+                        case '电影/电视剧/番组':
+                            movie.title = value;
+                            break;
+                        case '个人评分':
+                            movie.rating = parseFloat(value) || null;
+                            break;
+                        case '打分日期':
+                            movie.ratingDate = value;
+                            break;
+                        case '我的短评':
+                            movie.review = value;
+                            break;
+                        case '上映日期':
+                            movie.year = parseInt(value.split('/')[0]) || null;
+                            break;
+                        case '制片国家':
+                            movie.country = value;
+                            break;
+                        case '条目链接':
+                            movie.link = value;
+                            break;
+                    }
+                });
+                return {
+                    id: Date.now() + Math.random(),
+                    title: movie.title,
+                    director: '',
+                    year: movie.year,
+                    rating: movie.rating,
+                    ratingDate: movie.ratingDate || '',
+                    review: movie.review,
+                    country: movie.country || '',
+                    link: movie.link || '',
+                    coverUrl: '',
+                    createdAt: new Date().toISOString()
+                };
+            });
+        }
+
+        // 导入CSV
+        async function importCSV() {
+            const fileInput = document.getElementById('fileInput');
+            if (!fileInput.files.length) return alert('请选择CSV文件');
+
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const csvData = parseCSV(e.target.result);
+                    const existingMovies = JSON.parse(localStorage.getItem('movies'));
+                    
+                    // 去重处理
+                    const newMovies = csvData.filter(newMovie => 
+                        !existingMovies.some(existing => 
+                            existing.title === newMovie.title && 
+                            existing.year === newMovie.year
+                        )
+                    );
+
+                    localStorage.setItem('movies', JSON.stringify([...existingMovies, ...newMovies]));
+                    renderMovies();
+                    animateCards();
+                    alert(`成功导入 ${newMovies.length} 部电影，跳过 ${csvData.length - newMovies.length} 部重复`);
+                } catch (error) {
+                    alert('CSV文件解析失败，请检查格式');
+                }
+            };
+            reader.readAsText(fileInput.files[0], 'UTF-8');
+        }
+
+        // 添加电影
+        function addMovie(e) {
+            e.preventDefault();
+            
+            const movie = {
+                id: Date.now(),
+                title: document.getElementById('title').value,
+                director: document.getElementById('director').value,
+                year: parseInt(document.getElementById('year').value) || null,
+                rating: parseFloat(document.getElementById('rating').value) || null,
+                ratingDate: document.getElementById('ratingDate').value,
+                review: document.getElementById('review').value,
+                country: document.getElementById('country').value,
+                link: document.getElementById('link').value,
+                coverUrl: document.getElementById('coverUrl').value,
+                createdAt: new Date().toISOString()
+            };
+
+            const movies = JSON.parse(localStorage.getItem('movies'));
+            movies.push(movie);
+            localStorage.setItem('movies', JSON.stringify(movies));
+            
+            renderMovies();
+            animateCards();
+            e.target.reset();
+            return false;
+        }
+
+        // 分页变量
+        let currentPage = 1;
+        const moviesPerPage = 6; // 每页显示的电影数量
+        
+        // 渲染电影列表
+        function renderMovies() {
+            const movies = JSON.parse(localStorage.getItem('movies'));
+            const container = document.getElementById('movieList');
+            const countSpan = document.getElementById('movieCount');
+            const totalPages = Math.ceil(movies.length / moviesPerPage);
+            const paginationElement = document.getElementById('pagination');
+            
+            // 更新电影总数
+            countSpan.textContent = movies.length;
+            container.innerHTML = '';
+            
+            // 更新分页信息
+            document.getElementById('currentPage').textContent = currentPage;
+            document.getElementById('totalPages').textContent = totalPages;
+            document.getElementById('prevPage').disabled = currentPage === 1;
+            document.getElementById('nextPage').disabled = currentPage === totalPages || totalPages === 0;
+            
+            // 显示或隐藏分页控件
+            paginationElement.style.display = totalPages > 1 ? 'flex' : 'none';
+
+            if (movies.length === 0) {
+                container.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--dark);opacity:0.6;">暂无电影收藏，请添加或导入</p>';
+                return;
+            }
+            
+            // 计算当前页的电影
+            const startIndex = (currentPage - 1) * moviesPerPage;
+            const endIndex = Math.min(startIndex + moviesPerPage, movies.length);
+            const currentPageMovies = movies.slice(startIndex, endIndex);
+
+            currentPageMovies.forEach((movie, index) => {
+                const movieEl = document.createElement('div');
+                movieEl.className = 'movie-item';
+                movieEl.style.animationDelay = `${0.6 + index * 0.1}s`;
+                
+                const ratingDisplay = movie.rating ? `
+                    <span class="movie-rating">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                        </svg>
+                        ${movie.rating}
+                    </span>
+                ` : '';
+                
+                const yearDisplay = movie.year ? `
+                    <span>
+                        <svg viewBox="0 0 24 24">
+                            <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/>
+                        </svg>
+                        ${movie.year}
+                    </span>
+                ` : '';
+                
+                const directorDisplay = movie.director ? `
+                    <span>
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                        ${movie.director}
+                    </span>
+                ` : '';
+                
+                const countryDisplay = movie.country ? `
+                    <span>
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                        </svg>
+                        ${movie.country}
+                    </span>
+                ` : '';
+                
+                const ratingDateDisplay = movie.ratingDate ? `
+                    <span>
+                        <svg viewBox="0 0 24 24">
+                            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
+                            <path d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                        </svg>
+                        ${movie.ratingDate}
+                    </span>
+                ` : '';
+                
+                const linkButton = movie.link ? `
+                    <a href="${movie.link}" target="_blank" class="btn btn-outline" style="padding:0.3rem 0.8rem;font-size:0.8rem;">
+                        <svg viewBox="0 0 24 24" width="14" height="14">
+                            <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>
+                        </svg>
+                        查看详情
+                    </a>
+                ` : '';
+                
+                movieEl.innerHTML = `
+                    <div class="checkbox-container">
+                        <input type="checkbox" class="checkbox-input movie-checkbox" data-id="${movie.id}">
+                    </div>
+                    <img class="movie-poster" src="${movie.coverUrl || 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzQzNjFlZSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0xOSAyMUg1YTIgMiAwIDAgMS0yLTJWNWEyIDIgMCAwIDEgMi0yaDE0YTIgMiAwIDAgMSAyIDJ2MTRhMiAyIDAgMCAxLTIgMnoiPjwvcGF0aD48cGF0aCBkPSJNMTIgMTdoLTFjLTEuMSAwLTIuOS0uNC0zLjktMS4xTDEwIDEzLjVjLjUtLjcgMS4xLTEuNCAxLjYtMi4xLjUtLjcgMS0xLjQgMS0yLjFWMTAiPjwvcGF0aD48cGF0aCBkPSJNMTcgMTdoLTFjLTEuMSAwLTIuOS0uNC0zLjktMS4xTDE1IDEzLjVjLjUtLjcgMS4xLTEuNCAxLjYtMi4xLjUtLjcgMS0xLjQgMS0yLjFWMTAiPjwvcGF0aD48L3N2Zz4='}" alt="${movie.title}海报">
+                    <div class="movie-content">
+                        <h3 class="movie-title">${movie.title}</h3>
+                        <div class="movie-meta">
+                            ${directorDisplay}
+                            ${yearDisplay}
+                            ${ratingDisplay}
+                            ${ratingDateDisplay}
+                            ${countryDisplay}
+                        </div>
+                        ${movie.review ? `<p class="movie-review">${movie.review}</p>` : ''}
+                        <div class="movie-actions">
+                            <small class="movie-date">添加于 ${new Date(movie.createdAt).toLocaleDateString()}</small>
+                            <div>
+                                ${linkButton}
+                                <button class="btn btn-outline" onclick="editMovie(${movie.id})" style="padding:0.3rem 0.8rem;font-size:0.8rem;margin-right:0.5rem;">
+                                    <svg viewBox="0 0 24 24" width="14" height="14">
+                                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                                    </svg>
+                                    编辑
+                                </button>
+                                <button class="btn btn-outline" onclick="deleteMovie(${movie.id})" style="padding:0.3rem 0.8rem;font-size:0.8rem;">
+                                    <svg viewBox="0 0 24 24" width="14" height="14">
+                                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                                    </svg>
+                                    删除
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(movieEl);
+            });
+        }
+
+        // 删除电影
+        function deleteMovie(id) {
+            if (!confirm('确定要删除这部电影吗？')) return;
+            
+            let movies = JSON.parse(localStorage.getItem('movies'));
+            movies = movies.filter(movie => movie.id !== id);
+            localStorage.setItem('movies', JSON.stringify(movies));
+            renderMovies();
+            animateCards();
+        }
+        
+        // 删除选中的电影
+        function deleteSelectedMovies() {
+            const selectAllChecked = document.getElementById('selectAll').checked;
+            const selectedCheckboxes = document.querySelectorAll('.movie-checkbox:checked');
+            
+            // 如果没有选中任何电影且全选未勾选，则直接返回
+            if (selectedCheckboxes.length === 0 && !selectAllChecked) return;
+            
+            let movies = JSON.parse(localStorage.getItem('movies'));
+            let deleteCount = selectedCheckboxes.length;
+            
+            // 如果全选按钮被勾选，则删除所有电影
+            if (selectAllChecked) {
+                deleteCount = movies.length;
+                if (!confirm(`确定要删除全部 ${deleteCount} 部电影吗？`)) return;
+                
+                // 清空所有电影
+                localStorage.setItem('movies', JSON.stringify([]));
+            } else {
+                // 否则只删除选中的电影
+                if (!confirm(`确定要删除选中的 ${deleteCount} 部电影吗？`)) return;
+                
+                const selectedIds = Array.from(selectedCheckboxes).map(checkbox => parseFloat(checkbox.dataset.id));
+                movies = movies.filter(movie => !selectedIds.includes(movie.id));
+                localStorage.setItem('movies', JSON.stringify(movies));
+            }
+            
+            // 重置全选按钮
+            document.getElementById('selectAll').checked = false;
+            document.getElementById('deleteSelectedBtn').style.display = 'none';
+            
+            renderMovies();
+            animateCards();
+        }
+
+        // 卡片动画
+        function animateCards() {
+            const cards = document.querySelectorAll('.card, .movie-item');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.animation = `fadeIn 0.6s forwards ${0.2 + index * 0.1}s`;
+            });
+        }
+
+        // 初始化
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            document.getElementById('fileName').textContent = e.target.files[0]?.name || '未选择文件';
+        });
+
+        // 设置当前日期
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('zh-CN', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        });
+        
+        // 分页导航
+        function goToNextPage() {
+            const totalPages = Math.ceil(JSON.parse(localStorage.getItem('movies')).length / moviesPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderMovies();
+                animateCards();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+        
+        function goToPrevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderMovies();
+                animateCards();
+            }
+        }
+
+        function jumpToPage() {
+            const jumpInput = document.getElementById('jumpPage');
+            const pageNum = parseInt(jumpInput.value);
+            const totalPages = Math.ceil(JSON.parse(localStorage.getItem('movies')).length / moviesPerPage);
+            
+            if (pageNum && pageNum >= 1 && pageNum <= totalPages) {
+                currentPage = pageNum;
+                renderMovies();
+                animateCards();
+                jumpInput.value = '';
+            } else {
+                alert('请输入有效的页码！');
+            }
+        }
+        
+        // 全选功能
+        function handleSelectAll() {
+            const isChecked = document.getElementById('selectAll').checked;
+            // 选中当前页面上的所有复选框
+            document.querySelectorAll('.movie-checkbox').forEach(checkbox => {
+                checkbox.checked = isChecked;
+            });
+            
+            // 显示或隐藏删除按钮
+            // 即使当前页面没有电影，只要全选按钮被勾选，也应该显示删除按钮
+            const movies = JSON.parse(localStorage.getItem('movies'));
+            if (isChecked && movies.length > 0) {
+                document.getElementById('deleteSelectedBtn').style.display = 'inline-flex';
+            } else {
+                document.getElementById('deleteSelectedBtn').style.display = 
+                    document.querySelectorAll('.movie-checkbox:checked').length > 0 ? 'inline-flex' : 'none';
+            }
+        }
+        
+        // 检查是否有选中的电影
+        function checkSelectedMovies() {
+            const selectedCheckboxes = document.querySelectorAll('.movie-checkbox:checked');
+            document.getElementById('deleteSelectedBtn').style.display = selectedCheckboxes.length > 0 ? 'inline-flex' : 'none';
+            
+            // 更新全选按钮状态
+            const allCheckboxes = document.querySelectorAll('.movie-checkbox');
+            document.getElementById('selectAll').checked = selectedCheckboxes.length > 0 && selectedCheckboxes.length === allCheckboxes.length;
+        }
+
+        // 编辑电影功能
+        function editMovie(id) {
+            const movies = JSON.parse(localStorage.getItem('movies'));
+            const movie = movies.find(m => m.id === id);
+            
+            if (!movie) return;
+            
+            // 填充表单数据
+            document.getElementById('editMovieId').value = movie.id;
+            document.getElementById('editTitle').value = movie.title || '';
+            document.getElementById('editDirector').value = movie.director || '';
+            document.getElementById('editYear').value = movie.year || '';
+            document.getElementById('editRating').value = movie.rating || '';
+            document.getElementById('editRatingDate').value = movie.ratingDate || '';
+            document.getElementById('editCountry').value = movie.country || '';
+            document.getElementById('editLink').value = movie.link || '';
+            document.getElementById('editCoverUrl').value = movie.coverUrl || '';
+            document.getElementById('editReview').value = movie.review || '';
+            
+            // 打开模态框
+            document.getElementById('editMovieModal').classList.add('active');
+            document.body.style.overflow = 'hidden'; // 防止背景滚动
+        }
+        
+        // 关闭编辑模态框
+        function closeEditModal() {
+            document.getElementById('editMovieModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        // 保存电影编辑
+        function saveMovieEdit() {
+            const movieId = document.getElementById('editMovieId').value;
+            const movies = JSON.parse(localStorage.getItem('movies'));
+            const movieIndex = movies.findIndex(m => m.id == movieId);
+            
+            if (movieIndex === -1) return;
+            
+            // 更新电影数据
+            movies[movieIndex] = {
+                ...movies[movieIndex],
+                title: document.getElementById('editTitle').value,
+                director: document.getElementById('editDirector').value,
+                year: parseInt(document.getElementById('editYear').value) || null,
+                rating: parseFloat(document.getElementById('editRating').value) || null,
+                ratingDate: document.getElementById('editRatingDate').value,
+                country: document.getElementById('editCountry').value,
+                link: document.getElementById('editLink').value,
+                coverUrl: document.getElementById('editCoverUrl').value,
+                review: document.getElementById('editReview').value,
+                updatedAt: new Date().toISOString()
+            };
+            
+            // 保存到本地存储
+            localStorage.setItem('movies', JSON.stringify(movies));
+            
+            // 关闭模态框并刷新电影列表
+            closeEditModal();
+            renderMovies();
+            animateCards();
+            
+            // 显示成功消息
+            alert('电影信息已成功更新！');
+        }
+        
+        (function() {
+            initStorage();
+            renderMovies();
+            animateCards();
+            
+            // 添加事件监听器
+            document.getElementById('nextPage').addEventListener('click', goToNextPage);
+            document.getElementById('prevPage').addEventListener('click', goToPrevPage);
+            document.getElementById('selectAll').addEventListener('change', handleSelectAll);
+            document.getElementById('deleteSelectedBtn').addEventListener('click', deleteSelectedMovies);
+            
+            // 为电影复选框添加事件委托
+            document.getElementById('movieList').addEventListener('change', function(e) {
+                if (e.target.classList.contains('movie-checkbox')) {
+                    checkSelectedMovies();
+                }
+            });
+            
+            // 为ESC键添加关闭模态框事件
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeEditModal();
+                }
+            });
+            
+            // 点击模态框背景关闭模态框
+            document.getElementById('editMovieModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeEditModal();
+                }
+            });
+            
+            // 延迟加载动画
+            setTimeout(() => {
+                document.querySelectorAll('.card, .movie-item').forEach(el => {
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                });
+            }, 100);
+        })();
+    </script>
+</body>
+</html>
