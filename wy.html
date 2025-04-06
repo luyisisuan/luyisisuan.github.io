@@ -4,201 +4,219 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>电影收藏馆 | 路易斯酸的艺术寄托</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/syberpoke.css">
+    <!-- 内联样式移到 CSS 文件或保持 -->
+    <style>
+        @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}.spinner{animation:spin 1s linear infinite;fill:currentColor;width:1em;height:1em;vertical-align:text-bottom;margin-right:.3em}.form-group label span{color:var(--secondary);margin-left:2px}.btn svg{margin-right:.4em}.btn-small{padding:.4rem .9rem;font-size:.85rem}.btn-small svg{width:14px;height:14px}.movie-actions .action-buttons .btn{margin-left:.5rem}.movie-details-grid .meta-item{margin-bottom:.4rem}.meta-item svg{vertical-align:middle;margin-right:.3em}.empty-message{grid-column:1 / -1;text-align:center;padding:3rem 1rem;opacity:.7;font-style:italic}.pagination-jump{display:flex;align-items:center;gap:.5rem}.pagination-jump input{width:55px;padding:.4rem;font-size:.9rem}.pagination-jump button{padding:.4rem .8rem}
+        /* 新增或修改的优化样式 */
+        main { display: flex; flex-direction: column; gap: 2rem; /* 主内容区域间距 */ }
+        .card summary { cursor: pointer; display: block; /* 让 summary 表现像块级元素 */ outline: none; /* 移除点击时的轮廓 */ }
+        .card summary h2 { margin-bottom: 0; /* 移除标题在 summary 内的下边距 */ display: inline-flex; align-items: center; width: 100%; } /* 让标题撑满summary */
+        .card details > *:not(summary) { margin-top: 1.5rem; /* details 展开后内容的顶部间距 */ }
+        .card details[open] summary::after { transform: rotate(90deg); /* 展开时旋转箭头 */ }
+        .card summary::marker, /* 隐藏默认箭头 (某些浏览器) */
+        .card summary::-webkit-details-marker { display: none; }
+        .card summary { position: relative; padding-right: 2em; /* 为自定义箭头留出空间 */ }
+        .card summary::after { /* 自定义箭头 */
+            content: '▶';
+            font-size: 0.8em;
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%) rotate(0deg);
+            transition: transform 0.2s ease-in-out;
+            color: var(--primary);
+            opacity: 0.7;
+        }
+         /* 管理面板布局 */
+        .management-panels {
+            display: grid;
+            grid-template-columns: 1fr; /* 默认单列 */
+            gap: 1.5rem;
+        }
+        @media (min-width: 992px) { /* 在大屏幕上变成多列 */
+            .management-panels {
+                grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+                gap: 2rem;
+            }
+        }
+        .management-panels .card { margin-bottom: 0; /* 移除网格内部卡片的下边距 */ }
+        /* 调整分页控件的外边距 */
+        #pagination { margin-top: 2rem; margin-bottom: 1rem; }
+        /* 调整表单内豆瓣按钮 */
+        #addMovieForm .btn-small { height: calc(1.8em + 1.8rem + 2px); /* 与输入框等高 */}
+        @media (max-width: 480px) { .pagination-jump span { display: none; } .pagination-jump input { width: 50px;} }
+    </style>
 </head>
 <body>
     <div class="container">
         <header class="header">
             <h1>电影收藏馆</h1>
             <p>已收藏 <span class="movie-count" id="movieCount">0</span> 部电影</p>
+            <hr style="border: none; height: 1px; background: linear-gradient(to right, transparent, var(--primary-light), transparent); opacity: 0.3; margin-top: 1.5rem;">
         </header>
 
         <main>
-            <section class="card" style="animation-delay: 0.3s">
-                <h2>
-                    <svg viewBox="0 0 24 24">
-                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z"/>
-                        <path d="M7 12h2v5H7zm4-7h2v12h-2zm4 4h2v8h-2z"/>
-                    </svg>
-                    CSV导入电影
-                </h2>
-                <div class="csv-upload">
-                    <input type="file" id="fileInput" class="file-input" accept=".csv">
-                    <label for="fileInput" class="btn btn-outline file-label">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-                        </svg>
-                        选择CSV文件
-                    </label>
-                    <span id="fileName" class="file-name">未选择文件</span>
-                    <button class="btn btn-primary" onclick="importCSV()">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M5 20h14v-2H5v2zm0-10h4V6h6v4h4l-7 7-7-7z"/>
-                        </svg>
-                        开始导入
-                    </button>
-                </div>
-                <small>支持格式：电影/电视剧/番组,个人评分,打分日期,我的短评,上映日期,制片国家,条目链接（UTF-8编码）</small>
-            </section>
-
-            <section class="card" style="animation-delay: 0.4s">
-                <h2>
-                    <svg viewBox="0 0 24 24">
-                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-                    </svg>
-                    添加新电影
-                </h2>
-                <form id="addMovieForm" onsubmit="return addMovie(event)">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="title">电影名称</label>
-                            <input type="text" id="title" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="director">导演</label>
-                            <input type="text" id="director" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="year">上映年份</label>
-                            <input type="number" id="year" class="form-control" min="1900" max="2099">
-                        </div>
-                        <div class="form-group">
-                            <label for="rating">个人评分（1-5）</label>
-                            <input type="number" id="rating" class="form-control" min="0" max="10" step="0.1">
-                        </div>
-                    </div>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="ratingDate">打分日期</label>
-                            <input type="date" id="ratingDate" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="country">制片国家/参评电影节</label>
-                            <input type="text" id="country" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="link">条目链接</label>
-                            <input type="url" id="link" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="coverUrl">海报URL</label>
-                            <input type="url" id="coverUrl" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="review">我的短评</label>
-                        <textarea id="review" class="form-control" rows="3"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
-                        </svg>
-                        添加电影
-                    </button>
-                </form>
-            </section>
-
-            <section class="card" style="animation-delay: 0.5s">
-                <h2>
-                    <svg viewBox="0 0 24 24">
-                        <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8 12.5v-9l6 4.5-6 4.5z"/>
-                    </svg>
-                    我的电影收藏
-                </h2>
+ <!-- 1. 电影收藏列表区域 (添加 id) -->
+ <section class="card" id="my-collection-section" style="animation-delay: 0.3s">
+    <h2>
+       <svg viewBox="0 0 24 24" width="20" height="20"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8 12.5v-9l6 4.5-6 4.5z"/></svg>
+       我的电影收藏
+   </h2>
                 <div class="movie-actions-bar">
                     <div class="select-all-container">
                         <input type="checkbox" id="selectAll" class="checkbox-input">
-                        <label for="selectAll">全选</label>
+                        <label for="selectAll">全选 (删除所有)</label>
                     </div>
-                    <button class="btn btn-outline" id="deleteSelectedBtn" style="display:none;">
-                        <svg viewBox="0 0 24 24" width="14" height="14">
-                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-                        </svg>
-                        删除选中
-                    </button>
-                </div>
-                <div class="movie-list" id="movieList"></div>
-                <div class="pagination" id="pagination">
-                    <button class="btn btn-outline pagination-btn" id="prevPage" disabled>
-                        <svg viewBox="0 0 24 24" width="14" height="14">
-                            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
-                        </svg>
-                        上一页
-                    </button>
-                    <div class="pagination-info">
-                        第 <span id="currentPage">1</span> 页，共 <span id="totalPages">1</span> 页
-                    </div>
-                    <div class="pagination-jump" style="display: flex; align-items: center; gap: 0.5rem;">
-                        <input type="number" id="jumpPage" class="form-control" style="width: 60px; padding: 0.3rem;" min="1" placeholder="页码">
-                        <button class="btn btn-outline pagination-btn" onclick="jumpToPage()" style="padding: 0.3rem 0.8rem;">
-                            跳转
+                    <div>
+                        <button class="btn btn-outline btn-small" id="exportCsvBtn" onclick="exportCSV()">
+                            <svg viewBox="0 0 24 24" width="14" height="14"><path d="M19 9h-...H5z"/></svg> 导出CSV
+                        </button>
+                        <button class="btn btn-outline btn-small" id="deleteSelectedBtn" style="display:none;">
+                            <svg viewBox="0 0 24 24" width="14" height="14"><path d="M6 19c...V4z"/></svg> 删除选中
                         </button>
                     </div>
-                    <button class="btn btn-outline pagination-btn" id="nextPage" disabled>
-                        下一页
-                        <svg viewBox="0 0 24 24" width="14" height="14">
-                            <path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/>
-                        </svg>
+                </div>
+                <div class="movie-list" id="movieList">
+                    <!-- 电影卡片将在这里动态生成 -->
+                </div>
+                <div class="pagination" id="pagination">
+                     <button class="btn btn-outline pagination-btn btn-small" id="prevPage" disabled>
+                        <svg viewBox="0 0 24 24" width="14" height="14"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg> 上一页
+                    </button>
+                    <div class="pagination-info">第 <span id="currentPage">1</span> / <span id="totalPages">1</span> 页</div>
+                    <div class="pagination-jump">
+                        <input type="number" id="jumpPage" class="form-control" min="1" placeholder="页">
+                        <button class="btn btn-outline pagination-btn btn-small" onclick="jumpToPage()">跳转</button>
+                    </div>
+                    <button class="btn btn-outline pagination-btn btn-small" id="nextPage" disabled>
+                        下一页 <svg viewBox="0 0 24 24" width="14" height="14"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
                     </button>
                 </div>
             </section>
+
+            <!-- 2. 管理功能面板容器 -->
+            <div class="management-panels">
+                <!-- 2a. CSV导入 (可折叠) -->
+                <details class="card" style="animation-delay: 0.4s">
+                    <summary>
+                         <h2>
+                            <svg viewBox="0 0 24 24" width="20" height="20"><path d="M19 3H5c-1...z"/></svg>
+                            CSV导入电影
+                        </h2>
+                    </summary>
+                    <div class="csv-upload">
+                        <input type="file" id="fileInput" class="file-input" accept=".csv">
+                        <label for="fileInput" class="btn btn-outline file-label">
+                            <svg viewBox="0 0 24 24"><path d="M19 13h-...z"/></svg> 选择CSV文件
+                        </label>
+                        <span id="fileName" class="file-name">未选择文件</span>
+                        <button class="btn btn-primary" onclick="importCSV()">
+                            <svg viewBox="0 0 24 24"><path d="M5 20h1...-7z"/></svg> 开始导入
+                        </button>
+                    </div>
+                    <small>支持格式：电影/剧集<span>*</span>,评分,观影日期<span>*</span>,短评,年份,国家,链接,导演,海报URL (UTF-8, *必需)</small>
+                </details>
+
+                <!-- 2b. 添加新电影 (可折叠) -->
+                <details class="card" style="animation-delay: 0.5s">
+                     <summary>
+                         <h2>
+                            <svg viewBox="0 0 24 24" width="20" height="20"><path d="M19 13h-...z"/></svg>
+                            添加新电影
+                        </h2>
+                     </summary>
+                    <form id="addMovieForm" onsubmit="addMovie(event); return false;">
+                         <div class="form-group">
+                            <label for="title">电影名称 <span>*</span></label>
+                            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                 <input type="text" id="title" class="form-control" required style="flex-grow: 1;">
+                                 <button type="button" class="btn btn-outline btn-small" onclick="searchDouban()" title="去豆瓣搜索此电影">
+                                    <svg viewBox="0 0 24 24"><path d="M15.5 14h...14z"/></svg> 豆瓣
+                                 </button>
+                            </div>
+                            <small>输入名称后可点按钮去豆瓣查找链接，在编辑时添加。</small>
+                        </div>
+                         <div class="form-grid">
+                            <div class="form-group">
+                                <label for="rating">个人评分（0-5）</label>
+                                <input type="number" id="rating" class="form-control" min="0" max="10" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label for="ratingDate">观影日期 <span>*</span></label>
+                                <input type="date" id="ratingDate" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="review">我的短评</label>
+                            <textarea id="review" class="form-control" rows="3"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <svg viewBox="0 0 24 24"><path d="M17 3H7c...-2z"/></svg> 添加电影
+                        </button>
+                    </form>
+                </details>
+
+                <!-- 2c. 设置 (可折叠) -->
+                <details class="card" style="animation-delay: 0.6s">
+                     <summary>
+                        <h2>
+                            <svg viewBox="0 0 24 24" width="20" height="20"><path d="M19.43...3.5z"/></svg>
+                            设置 (获取详情)
+                        </h2>
+                     </summary>
+                    <div class="form-group">
+                        <label for="tmdbApiKey">TMDb API Key (v3 auth)</label>
+                        <input type="password" id="tmdbApiKey" class="form-control" placeholder="粘贴你的 TMDb API Key 并保存">
+                        <button class="btn btn-outline" onclick="saveTmdbApiKey()" style="margin-top: 0.5rem;">保存 Key</button>
+                        <small style="display: block; margin-top: 0.5rem; opacity: 0.7;">
+                            API Key 保存在本地。 <a href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener noreferrer">获取Key</a>.
+                            <strong style="color: var(--secondary);">请勿在公共环境使用！</strong>
+                        </small>
+                    </div>
+                     <div class="form-group" style="margin-top: 1rem;">
+                        <button class="btn btn-primary" onclick="fetchAllMissingDetails()">
+                            <svg viewBox="0 0 24 24"><path d="M12 4.5C...3-3z"/></svg> 为无详情电影获取信息
+                        </button>
+                         <small>为缺少海报/导演/年份/国家的电影尝试从TMDb获取。</small>
+                    </div>
+                </details>
+            </div> <!-- management-panels end -->
+
         </main>
 
         <footer class="footer">
-            <p>更新于 <span id="currentDate"></span> | 本网页由段绪程独立编写，盗版必究 | 20223535@csutf.com</p>
+             <p>更新于 <span id="currentDate"></span> | By 段绪程 | 20223535@csutf.com</p>
         </footer>
     </div>
-    
-    <!-- 编辑电影模态框 -->
+
+    <<!-- Edit Movie Modal -->
     <div class="modal-overlay" id="editMovieModal">
         <div class="modal-container">
             <div class="modal-header">
                 <h3 class="modal-title">编辑电影</h3>
-                <button class="modal-close" onclick="closeEditModal()">&times;</button>
+                <button class="modal-close" onclick="closeEditModal()">×</button>
             </div>
             <div class="modal-body">
                 <form id="editMovieForm">
                     <input type="hidden" id="editMovieId">
                     <div class="form-grid">
-                        <div class="form-group">
-                            <label for="editTitle">电影名称</label>
-                            <input type="text" id="editTitle" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="editDirector">导演</label>
-                            <input type="text" id="editDirector" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="editYear">上映年份</label>
-                            <input type="number" id="editYear" class="form-control" min="1900" max="2099">
-                        </div>
-                        <div class="form-group">
-                            <label for="editRating">个人评分（1-5）</label>
-                            <input type="number" id="editRating" class="form-control" min="0" max="10" step="0.1">
-                        </div>
+                        <div class="form-group"><label for="editTitle">电影名称 <span>*</span></label><input type="text" id="editTitle" class="form-control" required></div>
+                        <div class="form-group"><label for="editDirector">导演</label><input type="text" id="editDirector" class="form-control"></div>
+                        <div class="form-group"><label for="editYear">上映年份</label><input type="number" id="editYear" class="form-control" min="1880" max="2099"></div>
+                        <div class="form-group"><label for="editRating">个人评分</label><input type="number" id="editRating" class="form-control" min="0" max="10" step="0.1"></div>
                     </div>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label for="editRatingDate">打分日期</label>
+                            <!-- MODIFICATION: Removed the required asterisk span here -->
+                            <label for="editRatingDate">观影日期</label>
                             <input type="date" id="editRatingDate" class="form-control">
                         </div>
-                        <div class="form-group">
-                            <label for="editCountry">制片国家/参评电影节</label>
-                            <input type="text" id="editCountry" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="editLink">条目链接</label>
-                            <input type="url" id="editLink" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="editCoverUrl">海报URL</label>
-                            <input type="url" id="editCoverUrl" class="form-control">
-                        </div>
+                        <div class="form-group"><label for="editCountry">制片国家/参评电影节</label><input type="text" id="editCountry" class="form-control"></div>
+                        <div class="form-group"><label for="editLink">条目链接 (如豆瓣)</label><input type="url" id="editLink" class="form-control"></div>
+                        <div class="form-group"><label for="editCoverUrl">海报URL</label><input type="url" id="editCoverUrl" class="form-control"></div>
                     </div>
-                    <div class="form-group">
-                        <label for="editReview">我的短评</label>
-                        <textarea id="editReview" class="form-control" rows="3"></textarea>
-                    </div>
+                    <div class="form-group"><label for="editReview">我的短评</label><textarea id="editReview" class="form-control" rows="3"></textarea></div>
                 </form>
             </div>
             <div class="modal-footer">
