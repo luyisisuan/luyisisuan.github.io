@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电影收藏馆 | 路易斯酸的艺术寄托</title>
+    <!-- <link rel="stylesheet" href="css/syberpoke.css"> <-- 外部 CSS 已移除 -->
+    <style>
+        /* ============================================= */
+        /*          嵌入式 syberpoke.css - v3.0         */
+        /*    固定菜单 + 模态框 + 赛博朋克 + 中文注释   */
+        /* ============================================= */
+
+        /* --- 根变量定义 (颜色、过渡、辉光等) --- */
+        :root {
+            /* 主色调 */
+            --primary: #00f3ff;       /* 亮青色 (主霓虹色) */
+            --primary-light: #69f0ff; /* 稍浅的青色 */
+            --secondary: #ff00a0;     /* 品红色 (强调色) */
+            --tertiary: #f0f30a;      /* 亮黄色 (高亮色) */
+
+            /* 背景与文本 */
+            --dark: #080918;         /* 更深的暗蓝紫色背景 */
+            --dark-accent: #1a1b3f;   /* 暗色调强调 */
+            --light: #e8f8ff;        /* 亮色文本/元素 (稍带蓝色调) */
+            --gray: #3a3b5a;         /* 中性灰色调 */
+
+            /* 玻璃效果 */
+            --glass: rgba(12, 14, 35, 0.78);  /* 玻璃背景色 (更偏暗蓝) */
+            --glass-border: rgba(0, 243, 255, 0.28); /* 玻璃边框色 (稍明显) */
+            --glass-hover-border: rgba(0, 243, 255, 0.7); /* Hover时边框更亮 */
+            --sticky-bg: rgba(10, 11, 30, 0.95); /* 吸顶标题的背景色 (更不透明) */
+
+            /* 阴影与辉光 */
+            --shadow: 0 5px 18px rgba(0, 243, 255, 0.12);  /* 更柔和的基础阴影 */
+            --shadow-hover: 0 8px 30px rgba(0, 243, 255, 0.22); /* Hover阴影 */
+            --neon-glow: /* 主青色辉光 (多层叠加) */
+                0 0 6px rgba(0, 243, 255, 0.6),
+                0 0 12px rgba(0, 243, 255, 0.4),
+                0 0 20px rgba(0, 243, 255, 0.2);
+            --neon-glow-pink: /* 品红色辉光 */
+                0 0 6px rgba(255, 0, 160, 0.6),
+                0 0 12px rgba(255, 0, 160, 0.4),
+                0 0 20px rgba(255, 0, 160, 0.2);
+            --neon-glow-yellow: /* 黄色辉光 */
+                0 0 6px rgba(240, 243, 10, 0.7),
+                0 0 12px rgba(240, 243, 10, 0.5),
+                0 0 20px rgba(240, 243, 10, 0.3);
+
+            /* 过渡与动画 */
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); /* 更快的过渡曲线 */
+            --scanline: rgba(0, 243, 255, 0.07); /* 扫描线 */
+            --grid-line: rgba(255, 0, 160, 0.05); /* 网格线 */
+        }
+
+        /* --- 全局重置与字体 --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        @font-face { font-family: 'Cyberpunk'; src: local('Rajdhani'), local('Orbitron'), local('Segoe UI'), sans-serif; /* 添加 sans-serif 作为最终后备 */ }
+
+        /* --- Body 与背景效果 --- */
+        body {
+            font-family: 'Cyberpunk', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(140deg, var(--dark) 10%, var(--dark-accent) 90%); /* 调整渐变角度和比例 */
+            /* 叠加更精细的背景纹理 */
+            background-image:
+                linear-gradient(140deg, var(--dark) 10%, var(--dark-accent) 90%),
+                /* 细微噪点 */
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%239C92AC' fill-opacity='0.06' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E"),
+                repeating-linear-gradient(135deg, var(--grid-line) 0px, var(--grid-line) 1px, transparent 1px, transparent 30px), /* 调整网格间距 */
+                repeating-linear-gradient(45deg, var(--grid-line) 0px, var(--grid-line) 1px, transparent 1px, transparent 30px);
+            color: var(--light);
+            line-height: 1.6; /* 减少行高 */
+            min-height: 100vh;
+            /* 为固定菜单留出顶部空间 */
+            padding-top: 6rem; /* 可根据实际菜单高度调整 */
+            padding-left: clamp(1.5rem, 4vw, 2.5rem); /* 左右内边距 */
+            padding-right: clamp(1.5rem, 4vw, 2.5rem);
+            padding-bottom: clamp(1.5rem, 4vw, 2.5rem); /* 底部内边距 */
+            position: relative;
+            overflow-x: hidden; /* 防止水平滚动 */
+        }
+        /* 径向光晕效果 */
+        body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(circle at 15% 25%, rgba(255,0,160,.15) 0%, transparent 50%), radial-gradient(circle at 85% 75%, rgba(0,243,255,.15) 0%, transparent 50%), radial-gradient(circle at 55% 55%, rgba(240,243,10,.1) 0%, transparent 40%); pointer-events: none; z-index: -1; mix-blend-mode: color-dodge; /* 尝试不同的混合模式 */ }
+        /* 扫描线效果 */
+        body::after { content: ''; position: fixed; inset: 0; background: repeating-linear-gradient(0deg, var(--scanline) 0px, var(--scanline) 1px, transparent 1px, transparent 3px); /* 更密的扫描线 */ pointer-events: none; z-index: 1000; /* 确保在最上层 */ opacity: 0.15; animation: scanline 12s linear infinite alternate; /* 来回移动 */ }
+
+        /* --- 容器与头部 --- */
+        .container { max-width: 1180px; /* 稍窄容器 */ margin: 0 auto; position: relative; }
+        .header { text-align: center; margin-bottom: 3rem; /* 页头和主内容的间距 */ }
+        .header::before { content: ''; position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 140px; height: 3px; background: linear-gradient(90deg, transparent, var(--secondary) 50%, transparent); filter: blur(1.5px); opacity: 0.8; }
+        .header h1 { font-size: clamp(2rem, 5vw, 3rem); /* 缩小标题 */ font-weight: 700; margin-bottom: 0.6rem; background: linear-gradient(90deg, var(--primary), var(--secondary), var(--tertiary), var(--primary)); background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; letter-spacing: 1.8px; text-transform: uppercase; position: relative; text-shadow: var(--neon-glow), 0 0 45px rgba(0, 243, 255, 0.2); animation: neonFlicker 5s infinite alternate, dataStream 10s linear infinite; }
+        .header h1::after { content: attr(data-text); position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, var(--primary), var(--secondary)); -webkit-background-clip: text; background-clip: text; color: transparent; filter: blur(12px); opacity: 0.7; }
+        .header p { font-size: 1.1rem; color: var(--light); opacity: 0.9; letter-spacing: 0.8px; }
+        .movie-count { font-weight: 700; color: var(--secondary); text-shadow: var(--neon-glow-pink); }
+        .header hr { border: none; height: 1px; background: linear-gradient(to right, transparent, var(--primary-light), transparent); opacity: 0.3; margin-top: 2rem; }
+
+        /* --- 主要内容区域 --- */
+        main { display: flex; flex-direction: column; gap: 2.5rem; }
+
+        /* --- 卡片通用样式 --- */
+        .card { background: var(--glass); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 6px; border: 1px solid var(--glass-border); box-shadow: var(--shadow), inset 0 0 15px rgba(0, 243, 255, 0.05); padding: 2rem 2.2rem; /* 减小内边距 */ transition: var(--transition); opacity: 0; transform: translateY(15px); position: relative; animation: fadeIn 0.6s forwards; }
+        /* .management-panels .card { margin-bottom: 0; } /* 管理面板已移除 */
+        .card:not(details):hover, details[open].card { transform: translateY(-4px) scale(1.01); box-shadow: var(--shadow-hover), inset 0 0 20px rgba(0, 243, 255, 0.08); border-color: var(--glass-hover-border); }
+        .card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, var(--primary), transparent 70%); filter: blur(1px); opacity: 0.8; transition: width 0.4s ease; }
+        .card:hover::before { width: 90%; }
+        .card::after { content: ''; position: absolute; bottom: 0; right: 0; width: 50%; height: 1px; background: linear-gradient(90deg, transparent, var(--secondary) 80%); filter: blur(0.5px); opacity: 0.7; transition: width 0.4s ease; }
+        .card:hover::after { width: 70%; }
+        .card h2 { font-size: clamp(1.3rem, 3vw, 1.6rem); margin-bottom: 1.8rem; color: var(--light); display: flex; align-items: center; text-transform: uppercase; letter-spacing: 1px; position: relative; text-shadow: 0 0 4px rgba(255,255,255,0.15); }
+        .card h2 svg { margin-right: 0.7rem; width: 20px; height: 20px; fill: var(--primary); filter: drop-shadow(0 0 5px var(--primary)); }
+        /* 移除标题下划线样式，移到吸顶标题样式中 */
+        /* .card h2::after { ... } */
+
+        /* --- 吸顶标题样式 (针对电影收藏列表标题) --- */
+        #my-collection-section > h2.sticky-header { /* 使用类名应用样式 */
+            position: -webkit-sticky; position: sticky;
+            top: 0rem; /* 吸附距离页面顶部 */
+            background: var(--sticky-bg); /* 吸顶背景色 */
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            padding: 1rem 2.2rem; /* 吸顶时的内边距 */
+            margin: -2rem -2.2rem 1.5rem -2.2rem; /* 负边距使其延伸到卡片边缘 */
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 999; /* 层级控制 (低于固定菜单和模态框) */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        /* 吸顶标题的下划线 */
+        #my-collection-section > h2.sticky-header::after {
+            content: ''; position: absolute; bottom: 0.6rem; left: 2.2rem;
+            width: 45px; height: 2px; background: var(--secondary);
+            box-shadow: var(--neon-glow-pink); border-radius: 1px;
+        }
+        /* 确保列表操作栏在吸顶标题下方有足够空间 */
+        #my-collection-section > .movie-actions-bar {
+            margin-top: 0; /* sticky 布局通常能处理好间距 */
+            padding-top: 0.5rem;
+        }
+
+        /* --- 表单样式 (主要用于模态框) --- */
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem 1.5rem; margin-bottom: 1.5rem; }
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label { font-size: 0.8rem; margin-bottom: 0.4rem; opacity: 0.85; display: block; text-transform: uppercase; letter-spacing: 0.4px; }
+        .form-group label span { color: var(--secondary); margin-left: 3px; } /* 必填星号 */
+        .form-control { width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--glass-border); border-radius: 4px; background: rgba(10, 11, 30, 0.7); font-size: 0.95rem; transition: var(--transition), box-shadow 0.3s ease; color: var(--light); position: relative; z-index: 1; }
+        .form-control::placeholder { color: rgba(230, 242, 255, 0.35); }
+        .form-control:focus { outline: none; border-color: var(--primary-light); background: rgba(10, 11, 30, 0.8); box-shadow: 0 0 0 2px rgba(0, 243, 255, 0.2), 0 0 12px rgba(0, 243, 255, 0.5), inset 0 0 5px rgba(0, 243, 255, 0.1); }
+        textarea.form-control { min-height: 75px; resize: vertical; }
+        /* 添加电影模态框内的特殊布局 */
+        #addMovieModal .form-group > div:has(input#modalTitle) { display: flex; gap: 0.6rem; align-items: center; }
+        #addMovieModal input#modalTitle { flex-grow: 1; }
+        #addMovieModal button[onclick="searchDoubanFromModal()"] { flex-shrink: 0; height: calc(1.9em + 1.6rem + 2px); }
+
+        /* --- 按钮样式 --- */
+        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.7rem 1.4rem; border-radius: 4px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: var(--transition), transform 0.15s ease; border: none; text-decoration: none; letter-spacing: 1px; text-transform: uppercase; position: relative; overflow: hidden; line-height: 1.4; }
+        .btn svg { width: 15px; height: 15px; margin-right: 0.6em; vertical-align: middle; fill: currentColor; transition: transform 0.2s ease; }
+        .btn:hover svg { transform: scale(1.1); }
+        .btn:disabled { cursor: not-allowed; opacity: 0.5; filter: grayscale(50%); }
+        .btn::before { content: ''; position: absolute; inset: 0; background: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 0%, transparent 50%, rgba(255, 255, 255, 0.15) 100%); background-size: 200% 200%; background-position: 200% 0; transition: background-position 0.5s ease-out; opacity: 0; z-index: 0; }
+        .btn:not(:disabled):hover::before { background-position: -100% 0; opacity: 1; }
+        .btn > * { position: relative; z-index: 1; }
+        .btn:not(:disabled):active { transform: scale(0.97); } /* 点击反馈 */
+        .btn-primary { background: linear-gradient(110deg, var(--primary), var(--secondary)); color: var(--dark); font-weight: 700; box-shadow: 0 3px 10px rgba(0, 243, 255, 0.3), 0 0 15px rgba(255, 0, 160, 0.15); text-shadow: 0 1px 1px rgba(0,0,0,0.1); }
+        .btn-primary:not(:disabled):hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 6px 15px rgba(0, 243, 255, 0.4), 0 0 25px rgba(255, 0, 160, 0.25); }
+        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); box-shadow: 0 0 6px rgba(0, 243, 255, 0.3), inset 0 0 8px rgba(0, 243, 255, 0.05); }
+        .btn-outline:not(:disabled):hover { background: rgba(0, 243, 255, 0.12); color: var(--light); border-color: var(--primary-light); box-shadow: 0 0 12px rgba(0, 243, 255, 0.5), inset 0 0 10px rgba(0, 243, 255, 0.1); text-shadow: 0 0 5px var(--primary); }
+        .btn-small { padding: 0.5rem 1rem; font-size: 0.8rem; letter-spacing: 0.5px; }
+        .btn-small svg { width: 13px; height: 13px; margin-right: 0.5em; }
+
+        /* --- CSV 上传 (模态框内) --- */
+        .csv-upload { display: flex; flex-wrap: wrap; align-items: center; gap: 0.8rem; margin-bottom: 1rem; }
+        .file-input { display: none; }
+        .file-label { display: inline-flex; align-items: center; cursor: pointer; }
+        .file-name { margin-left: 0.4rem; font-size: 0.85rem; opacity: 0.75; font-style: italic; flex-grow: 1; word-break: break-all; color: var(--primary-light); }
+        #importCsvModal .file-name { display: block; margin-top: 0.5rem; width: 100%; text-align: center; }
+
+        /* --- 固定右上角管理菜单容器 --- */
+        .header-actions-fixed {
+            position: fixed; /* 固定定位 */
+            top: 1.5rem;      /* 距顶部距离 */
+            right: 1.5rem;     /* 距右侧距离 */
+            z-index: 1020;   /* 高层级，确保在内容和吸顶标题之上 */
+        }
+
+        /* --- 下拉菜单样式 --- */
+        .dropdown-menu {
+            display: none; /* 默认隐藏 */
+            position: absolute;
+            top: calc(100% + 8px); /* 出现在按钮下方，带一点间隙 */
+            right: 0; /* 对齐到按钮右侧 */
+            min-width: 200px; /* 最小宽度 */
+            background: var(--dark); /* 使用深色背景 */
+            border: 1px solid var(--primary); /* 霓虹边框 */
+            border-radius: 4px;
+            box-shadow: var(--shadow-hover), 0 0 40px rgba(0, 243, 255, 0.25); /* 更强的辉光 */
+            padding: 0.6rem 0; /* 上下内边距 */
+            z-index: 1010; /* 低于模态框，高于普通内容 */
+            opacity: 0;
+            transform: translateY(-10px) scale(0.95);
+            transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+            list-style: none;
+        }
+        .dropdown-menu.active { /* 控制显示 */
+            display: block;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        /* 下拉菜单项 */
+        .dropdown-menu a {
+            display: flex; align-items: center; gap: 0.7em;
+            padding: 0.8rem 1.3rem; color: var(--primary-light); text-decoration: none;
+            font-size: 0.9rem; white-space: nowrap; transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .dropdown-menu a svg { width: 16px; height: 16px; fill: currentColor; opacity: 0.8; transition: opacity 0.2s; }
+        .dropdown-menu a:hover { background-color: rgba(0, 243, 255, 0.15); color: var(--light); }
+        .dropdown-menu a:hover svg { opacity: 1; }
+        /* 禁用的菜单项样式 */
+        .dropdown-item-disabled { color: var(--gray) !important; opacity: 0.5; cursor: not-allowed; pointer-events: none; background-color: transparent !important; }
+        .dropdown-item-disabled svg { opacity: 0.4; }
+        /* 下拉菜单分隔线 */
+        .dropdown-divider { height: 1px; margin: 0.5rem 0; overflow: hidden; background-color: var(--glass-border); opacity: 0.5; }
+
+
+        /* --- 电影列表与卡片样式 (垂直布局, 海报缩小居中) --- */
+        /* --- Movie List & Item Styles (Fixed Columns) --- */
+.movie-list {
+    display: grid;
+    gap: 2rem; /* 卡片间距 */
+
+    /* 默认（移动端优先）：单列 */
+    grid-template-columns: 1fr;
+}
+
+/* 中等屏幕（例如 >= 640px）：尝试 2 列 */
+@media (min-width: 640px) {
+    .movie-list {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem; /* 调整列间距 */
+    }
+}
+
+/* 较大屏幕（例如 >= 992px）：设置为 3 列 */
+@media (min-width: 992px) {
+    .movie-list {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2.5rem; /* 可以稍微增大间距 */
+    }
+}
+
+/* 超大屏幕（例如 >= 1400px）：也可以考虑 4 列，但 3 列通常更舒适 */
+/* 如果要用 4 列，需要考虑将 moviesPerPage 改为 8 或 12 */
+@media (min-width: 1400px) {
+    .movie-list {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2.5rem;
+    }
+}
+        .movie-item { display: flex; flex-direction: column; background: var(--glass); backdrop-filter: blur(9px); -webkit-backdrop-filter: blur(9px); border-radius: 5px; border: 1px solid var(--glass-border); box-shadow: var(--shadow); transition: var(--transition), border-color 0.3s, box-shadow 0.3s; opacity: 0; transform: translateY(15px); position: relative; animation: fadeIn 0.5s forwards; }
+        .movie-item:hover { transform: translateY(-4px); border-color: var(--primary-light); box-shadow: var(--shadow-hover), 0 0 20px rgba(0, 243, 255, 0.15); }
+        .movie-item-poster { width: 60%; margin: 1rem auto 0 auto; aspect-ratio: 2 / 3; overflow: hidden; border-radius: 4px; box-shadow: 0 3px 8px rgba(0,0,0,0.3); }
+        .movie-item-poster img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 0.35s ease, filter 0.35s ease; filter: saturate(1.1) brightness(0.95); }
+        .movie-item:hover .movie-item-poster img { transform: scale(1.04); filter: saturate(1.35) brightness(1.05); }
+        .movie-item-content { padding: 1rem 1.8rem 1.2rem 1.8rem; display: flex; flex-direction: column; flex-grow: 1; min-height: 0; }
+        .movie-title { font-size: 1.15rem; font-weight: 600; margin-bottom: 0.7rem; line-height: 1.35; color: var(--primary-light); transition: color 0.3s ease, text-shadow 0.3s; word-break: break-word; overflow-wrap: break-word; text-shadow: 0 0 3px rgba(0, 243, 255, 0.15); text-align: center; margin-top: 0.5rem; }
+        .movie-item:hover .movie-title { color: var(--light); text-shadow: var(--neon-glow); }
+        .movie-details-grid { display: grid; grid-template-columns: 1fr; gap: 0.5rem; margin-bottom: 0.9rem; align-items: start; }
+        .movie-rating-display { display: inline-flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 700; color: var(--tertiary); margin-bottom: 0.5rem; text-shadow: var(--neon-glow-yellow); gap: 0.3em; }
+        .movie-rating-display svg { width: 1em; height: 1em; fill: currentColor; filter: drop-shadow(0 0 2px var(--tertiary)); }
+        .movie-rating-display.placeholder { font-size: 0.8rem; justify-content: center; }
+        .meta-item { display: flex; align-items: flex-start; font-size: 0.8rem; color: var(--light); opacity: 0.8; margin-bottom: 0.3rem; }
+        .meta-item svg { width: 12px; height: 12px; fill: var(--primary); filter: drop-shadow(0 0 2px var(--primary)); margin-right: 0.5em; flex-shrink: 0; margin-top: 0.2em; }
+        .meta-item span { word-break: break-word; overflow-wrap: break-word; line-height: 1.4; }
+        .movie-review { font-size: 0.85rem; line-height: 1.5; color: var(--light); opacity: 0.9; margin-top: 0.8rem; margin-bottom: 1rem; word-break: break-word; overflow-wrap: break-word; flex-grow: 1; min-height: 0; border-left: 2px solid rgba(0, 243, 255, 0.2); padding-left: 0.8rem; font-style: italic; }
+        .movie-actions { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; padding-top: 0.7rem; border-top: 1px solid rgba(0, 243, 255, 0.18); gap: 0.8rem; }
+        .movie-date { font-size: 0.75rem; opacity: 0.6; white-space: nowrap; text-align: right; color: var(--primary-light); }
+        .action-buttons { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .movie-actions .btn-small { border-color: rgba(0, 243, 255, 0.4); color: rgba(0, 243, 255, 0.8); box-shadow: 0 0 4px rgba(0, 243, 255, 0.15); }
+        .movie-actions .btn-small:hover { background: rgba(0, 243, 255, 0.15); color: var(--light); border-color: var(--primary-light); box-shadow: var(--neon-glow); }
+        .checkbox-container { position: absolute; top: 8px; right: 8px; left: auto; z-index: 10; background: rgba(10, 11, 30, 0.85); border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--glass-border); transition: border-color 0.2s, box-shadow 0.2s; }
+        .movie-item:hover .checkbox-container { border-color: var(--primary); box-shadow: 0 0 8px rgba(0, 243, 255, 0.5); }
+        .checkbox-input { cursor: pointer; width: 14px; height: 14px; accent-color: var(--secondary); }
+
+        /* --- 电影列表操作栏 (只剩全选) --- */
+        .movie-actions-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 0.8rem; border-bottom: 1px dashed var(--glass-border); }
+        .movie-actions-bar > div:last-child { min-width: 10px; /* 占位符 */ }
+        .select-all-container { display: flex; align-items: center; gap: 0.6rem; color: var(--light); }
+        .select-all-container label { cursor: pointer; font-weight: 500; }
+
+        /* --- 分页 --- */
+        .pagination { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 0.8rem 1rem; margin: 3rem 0 1.5rem 0; padding: 0; background: none; border: none; box-shadow: none; position: static; }
+        .pagination-btn { background: transparent; border: 1px solid var(--primary); color: var(--primary); box-shadow: 0 0 4px rgba(0, 243, 255, 0.2); padding: 0.5rem 1rem; font-size: 0.85rem; }
+        .pagination-btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: var(--gray); color: var(--gray); box-shadow: none; }
+        .pagination-btn:not(:disabled):hover { background: rgba(0, 243, 255, 0.15); box-shadow: 0 0 8px rgba(0, 243, 255, 0.5); text-shadow: 0 0 4px var(--primary); }
+        .pagination-info { font-size: 0.95rem; opacity: 0.9; white-space: nowrap; margin: 0 0.5rem; }
+        .pagination-jump { display: flex; align-items: center; gap: 0.5rem; }
+        .pagination-jump input { width: 55px; padding: 0.5rem; font-size: 0.9rem; text-align: center; }
+        .pagination-jump button { background: linear-gradient(110deg, var(--primary), var(--secondary)); color: var(--dark); font-weight: 600; box-shadow: 0 2px 8px rgba(0, 243, 255, 0.3); padding: 0.5rem 1rem; font-size: 0.85rem; }
+        .pagination-jump button:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0, 243, 255, 0.4); }
+
+        /* --- 模态框 --- */
+        .modal-overlay { position: fixed; inset:0; background: rgba(8, 9, 24, 0.9); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1050; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0s 0.3s linear; }
+        .modal-overlay.active { opacity: 1; visibility: visible; transition: opacity 0.3s ease, visibility 0s 0s linear; }
+        .modal-container { background: #10122a; border-radius: 6px; border: 1px solid var(--primary); box-shadow: 0 0 30px rgba(0, 243, 255, 0.3), 0 0 60px rgba(0, 243, 255, 0.15); width: 90%; max-width: 780px; max-height: 88vh; overflow-y: auto; position: relative; transform: scale(0.9) translateY(15px); transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .modal-overlay.active .modal-container { transform: scale(1) translateY(0); }
+        .modal-container::before { display: none; }
+        .modal-header { padding: 1.5rem 2rem; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; }
+        .modal-title { font-size: 1.4rem; color: var(--primary-light); margin: 0; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 5px var(--primary); }
+        .modal-close { background: none; border: none; color: var(--primary-light); font-size: 2rem; line-height: 1; cursor: pointer; padding: 0.1rem; border-radius: 50%; transition: var(--transition); }
+        .modal-close:hover { background: rgba(255, 0, 160, 0.2); color: var(--secondary); transform: rotate(90deg); }
+        .modal-body { padding: 2rem; }
+        .modal-footer { padding: 1.5rem 2rem; border-top: 1px solid var(--glass-border); display: flex; justify-content: flex-end; gap: 1rem; }
+
+        /* --- 页脚 --- */
+        .footer { text-align: center; margin-top: 5rem; font-size: 0.85rem; opacity: 0.5; letter-spacing: 0.3px; color: var(--primary-light); }
+
+        /* --- 动画 --- */
+        @keyframes fadeIn { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
+        @keyframes scanline { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
+        @keyframes neonFlicker { 0%,19%,21%,23%,25%,54%,56%,100%{opacity:1;text-shadow:var(--neon-glow)} 20%,24%,55%{opacity:0.7;text-shadow:none} }
+        @keyframes dataStream { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+        /* Spinner 定义在 HTML <style> 中 */
+        .spinner { display: inline-block; vertical-align: middle; animation: spin 1s linear infinite; }
+
+        /* --- 响应式调整 --- */
+        @media (max-width: 768px) {
+            body { padding-top: 5rem; padding-left: 1rem; padding-right: 1rem; padding-bottom: 1.5rem;}
+            .header-actions-fixed { top: 1rem; right: 1rem; }
+            .card { padding: 1.5rem; margin-bottom: 1.5rem; }
+            main { gap: 1.5rem; }
+            .header h1 { font-size: clamp(2rem, 7vw, 2.5rem); }
+            .movie-list { gap: 1.5rem; grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr)); }
+            .movie-item-poster { width: 85%; /* 移动端海报宽点 */ }
+            .movie-item-content { padding: 1rem 1.2rem; }
+            .movie-title { font-size: 1.1rem; margin-bottom: 0.7rem; }
+            .movie-details-grid { gap: 0.5rem 0.8rem; margin-bottom: 0.8rem; }
+            .movie-rating-display { font-size: 1.3rem; margin-bottom: 0.5rem; }
+            .meta-item { font-size: 0.8rem; }
+            .meta-item svg { width: 12px; height: 12px; }
+            .meta-item .meta-label { font-size: 0.7rem; }
+            .movie-review { font-size: 0.85rem; margin-bottom: 1rem; }
+            .movie-actions { padding-top: 0.7rem; flex-wrap: wrap; }
+            .action-buttons { flex-basis: 100%; justify-content: flex-start; margin-bottom: 0.4rem;}
+            .movie-date { flex-basis: 100%; text-align: left; }
+            .management-panels { grid-template-columns: 1fr; gap: 1.5rem; }
+            .form-grid { grid-template-columns: 1fr; }
+            .csv-upload { flex-direction: column; align-items: stretch; }
+            .csv-upload .btn-primary { margin-top: 0.5rem; }
+            .pagination { gap: 0.5rem 0.8rem; margin-top: 2.5rem; }
+        }
+        @media (max-width: 480px) {
+            body { padding: 1rem 0.8rem; padding-top: 4.5rem; } /* 调整顶部 padding */
+            .header-actions-fixed { top: 0.8rem; right: 0.8rem; } /* 调整固定按钮位置 */
+            .header-actions-fixed button span { display: none; } /* 隐藏管理按钮文字 */
+            .header-actions-fixed button svg { margin-right: 0; }
+            .dropdown-menu { min-width: 160px; } /* 窄下拉菜单 */
+            .card { padding: 1.2rem 1rem; }
+            .header { margin-bottom: 2.5rem; }
+            .movie-list { grid-template-columns: 1fr; gap: 1.2rem; }
+            .movie-item-poster { width: 90%; aspect-ratio: 2 / 3; } /* 小屏幕竖海报 */
+            .movie-title { font-size: 1.05rem; }
+            .movie-details-grid { grid-template-columns: 1fr; }
+            .meta-item { margin-bottom: 0.4rem; }
+            .pagination-info { display: none; }
+            .pagination-jump input { width: 45px; }
+        }
+
+        /* 空列表消息样式 */
+        .empty-message { grid-column: 1 / -1; text-align: center; padding: 4rem 1rem; color: var(--light); opacity: 0.5; font-style: italic; font-size: 1.1rem; border: 1px dashed var(--glass-border); border-radius: 4px; }
+
+    </style>
+</head>
+<body>
+    <!-- 固定在右上角的管理菜单容器 -->
+    <div class="header-actions-fixed" id="headerActions">
+        <button id="manageMenuBtn" class="btn btn-outline btn-small" title="管理收藏">
+            <svg viewBox="0 0 24 24" width="14" height="14"> <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/> </svg>
+            <span>管理</span>
+        </button>
+        <div id="manageMenuDropdown" class="dropdown-menu">
+            <!-- 下拉菜单项 -->
+            <a href="#" onclick="openModal('importCsvModal'); closeDropdown(); return false;">
+                <svg viewBox="0 0 24 24" width="16" height="16"><path d="M5 20h14v-2H5v2zm0-10h4V6h6v4h4l-7 7-7-7z"/></svg> 导入 CSV
+            </a>
+            <a href="#" onclick="openModal('addMovieModal'); closeDropdown(); return false;">
+               <svg viewBox="0 0 24 24" width="16" height="16"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> 添加电影
+            </a>
+            <a href="#" onclick="exportCSV(); closeDropdown(); return false;">
+                <svg viewBox="0 0 24 24" width="14" height="14"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg> 导出 CSV
+            </a>
+            <a href="#" id="deleteSelectedMenuItem" class="dropdown-item-disabled" onclick="if(!this.classList.contains('dropdown-item-disabled')) { deleteSelectedMovies(); closeDropdown(); } return false;">
+                <svg viewBox="0 0 24 24" width="14" height="14"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg> 删除选中
+            </a>
+            <hr class="dropdown-divider"> <!-- 分隔线 -->
+            <a href="#" onclick="openModal('settingsModal'); closeDropdown(); return false;">
+                <svg viewBox="0 0 24 24" width="14" height="14"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69-.98l-2.49-1c-.23-.08-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+                设置
+            </a>
+        </div>
+    </div>
+    <!-- 管理菜单容器结束 -->
+
+    <div class="container">
+        <header class="header">
+            <h1>电影收藏馆</h1>
+            <p>已收藏 <span class="movie-count" id="movieCount">0</span> 部电影</p>
+            <hr>
+        </header>
+
+        <main>
+            <!-- 电影收藏列表区域 -->
+            <section class="card" id="my-collection-section" style="animation-delay: 0.3s">
+                 <h2 class="sticky-header"> <!-- 吸顶标题 -->
+                    <svg viewBox="0 0 24 24" width="20" height="20"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8 12.5v-9l6 4.5-6 4.5z"/></svg>
+                    我的电影收藏
+                </h2>
+                <div class="movie-actions-bar"> <!-- 列表操作栏，现在只有“全选” -->
+                    <div class="select-all-container">
+                        <input type="checkbox" id="selectAll" class="checkbox-input">
+                        <label for="selectAll">全选</label>
+                    </div>
+                    <div></div> <!-- 空 div 用于对齐 -->
+                </div>
+                <div class="movie-list" id="movieList">
+                    <!-- 电影卡片由 JS 渲染 -->
+                </div>
+                <div class="pagination" id="pagination">
+                    <!-- 分页控件 -->
+                     <button class="btn btn-outline pagination-btn btn-small" id="prevPage" disabled><svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg> 上一页</button>
+                     <div class="pagination-info">第 <span id="currentPage">1</span> / <span id="totalPages">1</span> 页</div>
+                     <div class="pagination-jump"><input type="number" id="jumpPage" class="form-control" min="1" placeholder="页"><button class="btn btn-outline pagination-btn btn-small" onclick="jumpToPage()">跳转</button></div>
+                     <button class="btn btn-outline pagination-btn btn-small" id="nextPage" disabled>下一页 <svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg></button>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+             <p>更新于 <span id="currentDate"></span> | By 段绪程 | 20223535@csutf.com</p>
+        </footer>
+    </div>
+
+    <!-- ================== 模态框区域 ================== -->
+
+    <!-- 编辑电影模态框 -->
+    <div class="modal-overlay" id="editMovieModal">
+         <div class="modal-container">
+            <div class="modal-header"> <h3 class="modal-title">编辑电影</h3> <button class="modal-close" onclick="closeModal('editMovieModal')">×</button> </div>
+            <div class="modal-body">
+                <form id="editMovieForm"> <input type="hidden" id="editMovieId">
+                    <div class="form-grid">
+                        <div class="form-group"><label for="editTitle">名称<span>*</span></label><input type="text" id="editTitle" class="form-control" required></div>
+                        <div class="form-group"><label for="editDirector">导演</label><input type="text" id="editDirector" class="form-control"></div>
+                        <div class="form-group"><label for="editYear">年份</label><input type="number" id="editYear" class="form-control" min="1880" max="2099"></div>
+                        <div class="form-group"><label for="editRating">评分</label><input type="number" id="editRating" class="form-control" min="0" max="10" step="0.1"></div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group"><label for="editRatingDate">打分日期</label><input type="date" id="editRatingDate" class="form-control"></div>
+                        <div class="form-group"><label for="editCountry">国家/地区</label><input type="text" id="editCountry" class="form-control"></div>
+                        <div class="form-group"><label for="editLink">链接 (豆瓣等)</label><input type="url" id="editLink" class="form-control" placeholder="例如：https://movie.douban.com/subject/..."></div>
+                        <div class="form-group"><label for="editCoverUrl">海报URL</label><input type="url" id="editCoverUrl" class="form-control" placeholder="例如：https://img_url..."></div>
+                    </div>
+                    <div class="form-group"><label for="editReview">短评</label><textarea id="editReview" class="form-control" rows="3"></textarea></div>
+                </form>
+            </div>
+            <div class="modal-footer"> <button type="button" class="btn btn-outline" onclick="closeModal('editMovieModal')">取消</button> <button type="button" class="btn btn-primary" onclick="saveMovieEdit()">保存</button> </div>
+        </div>
+    </div>
+
+    <!-- 导入 CSV 模态框 -->
+    <div class="modal-overlay" id="importCsvModal">
+         <div class="modal-container">
+            <div class="modal-header"> <h3 class="modal-title">导入 CSV</h3> <button class="modal-close" onclick="closeModal('importCsvModal')">×</button> </div>
+            <div class="modal-body">
+                 <div class="csv-upload">
+                    <input type="file" id="modalFileInput" class="file-input" accept=".csv">
+                    <label for="modalFileInput" class="btn btn-outline file-label">
+                        <svg viewBox="0 0 24 24" width="16" height="16"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> 选择CSV文件
+                    </label>
+                    <span id="modalFileName" class="file-name">未选择文件</span>
+                </div>
+                <small>格式: 名称<span>*</span>, 评分, 打分日期<span>*</span>, 短评, 年份, 国家, 链接, 导演, 海报URL (UTF-8, *必需)</small>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeModal('importCsvModal')">取消</button>
+                <button type="button" class="btn btn-primary" id="importCsvBtnInModal" onclick="importCSV()">
+                    <svg viewBox="0 0 24 24" width="16" height="16"><path d="M5 20h14v-2H5v2zm0-10h4V6h6v4h4l-7 7-7-7z"/></svg> 开始导入
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加电影模态框 -->
+    <div class="modal-overlay" id="addMovieModal">
+         <div class="modal-container">
+            <div class="modal-header"> <h3 class="modal-title">添加电影</h3> <button class="modal-close" onclick="closeModal('addMovieModal')">×</button> </div>
+            <div class="modal-body">
+                <form id="addMovieFormModal" onsubmit="addMovie(event); return false;">
+                    <div class="form-group">
+                        <label for="modalTitle">电影名称 <span>*</span></label>
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                             <input type="text" id="modalTitle" class="form-control" required style="flex-grow: 1;" placeholder="输入电影准确名称">
+                             <button type="button" class="btn btn-outline btn-small" onclick="searchDoubanFromModal()" title="去豆瓣搜索此电影">
+                                <svg viewBox="0 0 24 24" width="14" height="14"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg> 豆瓣
+                             </button>
+                        </div>
+                        <small>输入名称后可点按钮去豆瓣查找链接，在编辑时添加。</small>
+                    </div>
+                     <div class="form-grid">
+                        <div class="form-group">
+                            <label for="modalRating">个人评分 (0-10)</label>
+                            <input type="number" id="modalRating" class="form-control" min="0" max="10" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label for="modalRatingDate">打分日期 <span>*</span></label>
+                            <input type="date" id="modalRatingDate" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="modalReview">我的短评</label>
+                        <textarea id="modalReview" class="form-control" rows="3" placeholder="写点什么..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                 <button type="button" class="btn btn-outline" onclick="closeModal('addMovieModal')">取消</button>
+                 <button type="button" class="btn btn-primary" id="addMovieBtnInModal" onclick="document.getElementById('addMovieFormModal').requestSubmit();">
+                    <svg viewBox="0 0 24 24" width="16" height="16"><path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg> 添加电影
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 设置模态框 -->
+    <div class="modal-overlay" id="settingsModal">
+         <div class="modal-container" style="max-width: 600px;">
+            <div class="modal-header"> <h3 class="modal-title">设置</h3> <button class="modal-close" onclick="closeModal('settingsModal')">×</button> </div>
+            <div class="modal-body">
+                 <div class="form-group">
+                    <label for="modalTmdbApiKey">TMDb API Key (v3认证)</label>
+                    <input type="password" id="modalTmdbApiKey" class="form-control" placeholder="粘贴你的 TMDb API Key 并保存">
+                    <button class="btn btn-outline" onclick="saveTmdbApiKey()" style="margin-top: 0.8rem;">保存 Key</button>
+                    <small style="display: block; margin-top: 0.5rem; opacity: 0.7;">
+                        API Key 保存在本地。 <a href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener noreferrer">获取Key</a>.
+                        <strong style="color: var(--secondary);">请勿在公共环境使用！</strong>
+                    </small>
+                </div>
+                 <hr class="dropdown-divider" style="margin: 2rem 0;">
+                 <div class="form-group">
+                     <label>批量操作</label>
+                    <button class="btn btn-primary" id="fetchAllBtnInModal" onclick="fetchAllMissingDetails()">
+                        <svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg> 为无详情电影获取信息
+                    </button>
+                     <small style="display: block; margin-top: 0.5rem; opacity: 0.7;">为缺少海报/导演/年份/国家的电影尝试从TMDb获取。</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeModal('settingsModal')">关闭</button>
+            </div>
+        </div>
+    </div>
+    <!-- 模态框区域结束 -->
+
+    <script>
+        // =============================================
+        //     电影收藏馆 - JavaScript v3.8
+        // 功能: 顶部固定下拉管理菜单(含导出/删除), 模态框操作, 自动获取详情,
+        //       按打分日期排序, 编辑时可选评分日期, 全选删除, CSV导入导出, 豆瓣搜索按钮
+        // 注释: 全部中文
+        // =============================================
+
+        // --- 全局变量与常量 ---
+        let currentPage = 1; // 当前页码
+        const moviesPerPage = 6; // 每页显示电影数量
+        const TMDB_POSTER_BASE_URL = 'https://image.tmdb.org/t/p/w500'; // TMDb 海报基础 URL (w500 尺寸)
+        const TMDB_API_KEY_STORAGE_KEY = 'tmdbApiKey'; // localStorage 中存储 API Key 的键名
+        const DEFAULT_POSTER_URL = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9IiNFNkYyRkYiIHN0cm9rZT0iIzRhNGI2ZSIgc3Ryb2tlLXdpZHRoPSIxIj48cmVjdCB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHg9IjMiIHk9IjMiIHJ4PSIyIiByeT0iMiIgc3Ryb2tlPSIjOWVhNmJjIiBmaWxsPSIjMmEyYjQ1Ii8+PHBhdGggZD0iTTMgMTJsNi02IDYgNi0zIDMiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlPSIjOWVhNmJjIi8+PGNpcmNsZSBjeD0iOSIgY3k9IjkiIHI9IjEiIGZpbGw9IiM5ZWE2YmMiLz48dGV4dCB4PSI1MHUiIHk9IjcwJSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTZweCIgZmlsbD0iI2U2ZjJmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+Tm8gSW1hZ2U8L3RleHQ+PC9zdmc+'; // 默认海报 SVG
+
+        // --- 初始化与基础功能 ---
+        /**
+         * 初始化本地存储，如果 'movies' 键不存在，则创建一个空数组字符串。
+         */
+        function initStorage() {
+            if (!localStorage.getItem('movies')) {
+                localStorage.setItem('movies', JSON.stringify([]));
+            }
+        }
+
+        // --- TMDb API 相关功能 ---
+        /**
+         * 从本地存储获取 TMDb API Key。
+         * @returns {string | null} API Key 字符串或 null。
+         */
+        function getTmdbApiKey() {
+            return localStorage.getItem(TMDB_API_KEY_STORAGE_KEY);
+        }
+
+        /**
+         * 保存用户在设置模态框中输入的 TMDb API Key 到本地存储。
+         */
+        function saveTmdbApiKey() {
+            const input = document.getElementById('modalTmdbApiKey'); // 获取模态框内的输入元素
+            const key = input.value.trim();
+            if (key) {
+                if (/^[a-z0-9]{32}$/i.test(key)) { // 简单验证32位字母数字格式
+                     localStorage.setItem(TMDB_API_KEY_STORAGE_KEY, key);
+                     alert('API Key 已保存。'); // 中文提示
+                     input.placeholder = "API Key 已保存 (如需更改请重新输入)"; // 更新占位符提示
+                } else {
+                     alert('API Key 格式错误 (应为32位字母或数字)。'); // 中文提示
+                }
+            } else {
+                localStorage.removeItem(TMDB_API_KEY_STORAGE_KEY); // 清除 Key
+                input.placeholder = "粘贴你的 TMDb API Key 并保存"; // 恢复默认占位符
+                alert('API Key 已清除。自动获取详情功能将停用。'); // 中文提示
+            }
+        }
+
+        /**
+         * 使用电影标题从 TMDb 获取电影详情 (海报, 导演, 年份, 国家)。
+         * @param {string} title - 要搜索的电影标题。
+         * @returns {Promise<{posterUrl: string|null, director: string|null, year: number|null, country: string|null}>} 包含详情的对象，失败则值为 null。
+         */
+        async function fetchMovieDetailsFromTmdb(title) {
+            const apiKey = getTmdbApiKey();
+            const result = { posterUrl: null, director: null, year: null, country: null }; // 初始化结果
+            if (!apiKey || !title) { // 如果没有 Key 或标题，直接返回
+                console.warn('获取 TMDb 详情失败：缺少 API Key 或电影标题。');
+                return result;
+            }
+
+            // 1. 搜索电影获取 ID
+            const searchUrl = `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${encodeURIComponent(title)}&language=zh-CN&include_adult=false`;
+            let movieId = null;
+            try {
+                const searchRes = await fetch(searchUrl);
+                if (!searchRes.ok) throw new Error(`TMDb 搜索 API 错误 (${searchRes.status})`);
+                const searchData = await searchRes.json();
+                // 如果找到结果，取第一个的 ID
+                if (searchData.results?.length > 0) {
+                    movieId = searchData.results[0].id;
+                } else {
+                    console.log(`未能为 "${title}" 找到 TMDb 匹配项。`);
+                    return result; // 未找到匹配，直接返回
+                }
+            } catch (err) {
+                console.error(`TMDb 搜索 "${title}" 时出错:`, err);
+                return result; // 搜索出错，直接返回
+            }
+
+            // 2. 使用 ID 获取电影详情和演职员信息
+            if (movieId) {
+                const detailsUrl = `https://api.themoviedb.org/3/movie/${movieId}?api_key=${apiKey}&language=zh-CN&append_to_response=credits`; // 同时请求演职员信息
+                try {
+                    const detailsRes = await fetch(detailsUrl);
+                    if (!detailsRes.ok) throw new Error(`TMDb 详情 API 错误 (${detailsRes.status})`);
+                    const d = await detailsRes.json(); // 电影详情数据
+
+                    if (d.poster_path) result.posterUrl = TMDB_POSTER_BASE_URL + d.poster_path; // 构建海报 URL
+                    if (d.release_date) result.year = parseInt(d.release_date.substring(0, 4)) || null; // 提取年份
+                    // 提取制片国家 (优先取中国或美国，否则取第一个)
+                    if (d.production_countries?.length > 0) {
+                        const country = d.production_countries.find(c => c.iso_3166_1 === 'CN') || d.production_countries.find(c => c.iso_3166_1 === 'US') || d.production_countries[0];
+                        result.country = country?.name || null;
+                    }
+                    // 提取导演 (从 credits.crew 筛选 job 为 Director)
+                    if (d.credits?.crew) {
+                        const directors = d.credits.crew.filter(c => c.job === 'Director');
+                        if (directors.length > 0) result.director = directors.map(dir => dir.name).join(', '); // 拼接多个导演
+                    }
+                } catch (err) {
+                    console.error(`获取 TMDb 详情 (ID: ${movieId}) 时出错:`, err);
+                    // 获取详情或演职员出错，不影响之前可能已获取的海报等信息
+                }
+            }
+            console.log(`为 "${title}" 获取到的 TMDb 详情:`, result);
+            return result; // 返回包含获取到的信息的对象
+        }
+
+        /**
+         * 尝试为收藏中所有缺少详情（海报、导演、年份、国家）的电影批量获取信息。
+         * 通过设置模态框中的按钮触发。
+         */
+        async function fetchAllMissingDetails() {
+            if (!getTmdbApiKey()) { alert('请先在设置中输入并保存 TMDb API Key。'); openModal('settingsModal'); return; } // 提示并打开设置
+            let movies = JSON.parse(localStorage.getItem('movies') || '[]');
+            // 筛选出需要更新的电影
+            const moviesToUpdate = movies.filter(m =>
+                (!m.coverUrl || m.coverUrl === DEFAULT_POSTER_URL) || !m.director || !m.year || !m.country
+            );
+            if (moviesToUpdate.length === 0) { alert('所有电影详情似乎都完整。'); return; } // 如果没有需要更新的
+
+            // 获取模态框内的按钮并更新状态
+            const fetchButton = document.querySelector('#settingsModal button[onclick="fetchAllMissingDetails()"]');
+            const originalButtonContent = fetchButton.innerHTML;
+            fetchButton.disabled = true;
+            const updateProgressText = (processed, total) => `<svg class="spinner" viewBox="0 0 24 24"><path d="M12 6v2a4 4 0 1 1-4 4H6a6 6 0 1 0 6-6z"/></svg> 获取中 (${processed}/${total})...`;
+            fetchButton.innerHTML = updateProgressText(0, moviesToUpdate.length);
+
+            let counts = { movies: 0, poster: 0, director: 0, year: 0, country: 0 }; // 计数器
+            const batchSize = 8;       // 每批处理数量
+            const delayBetweenBatches = 1200; // 每批间隔时间 (毫秒)，避免触发 API 限制
+
+            // 分批处理
+            for (let i = 0; i < moviesToUpdate.length; i += batchSize) { // 循环处理每一批
+                const batch = moviesToUpdate.slice(i, i + batchSize);
+                console.log(`正在处理批次 ${Math.floor(i / batchSize) + 1}...`);
+                fetchButton.innerHTML = updateProgressText(i, moviesToUpdate.length); // 更新按钮文本
+
+                // 并发请求当前批次
+                const promises = batch.map(async (movie) => {
+                    let movieUpdated = false; // 标记当前电影是否被更新了
+                    try {
+                        // 检查是否真的需要获取信息
+                        if ((!movie.coverUrl || movie.coverUrl === DEFAULT_POSTER_URL) || !movie.director || !movie.year || !movie.country) {
+                            const details = await fetchMovieDetailsFromTmdb(movie.title);
+                            // 找到这条电影在原始数组中的索引，直接修改原数组
+                            const movieIndex = movies.findIndex(m => m.id === movie.id);
+                            if (movieIndex !== -1) {
+                                let pU=0, dU=0, yU=0, cU=0;
+                                // 仅当字段为空时才更新
+                                if (details.posterUrl && (!movies[movieIndex].coverUrl || movies[movieIndex].coverUrl === DEFAULT_POSTER_URL)) { movies[movieIndex].coverUrl = details.posterUrl; pU=1; }
+                                if (details.director && !movies[movieIndex].director) { movies[movieIndex].director = details.director; dU=1; }
+                                if (details.year && !movies[movieIndex].year) { movies[movieIndex].year = details.year; yU=1; }
+                                if (details.country && !movies[movieIndex].country) { movies[movieIndex].country = details.country; cU=1; }
+                                // 如果有任何字段被更新，标记此电影被更新了
+                                if (pU||dU||yU||cU) movieUpdated = true;
+                                // 更新计数器
+                                if (pU) counts.poster++; if (dU) counts.director++; if (yU) counts.year++; if (cU) counts.country++;
+                            }
+                        }
+                    } catch (err) { console.error(`获取 "${movie.title}" 详情时出错:`, err); }
+                    if (movieUpdated) counts.movies++; // 更新了信息的电影总数
+                });
+
+                await Promise.allSettled(promises); // 等待当前批次所有请求完成（无论成功失败）
+                if (i + batchSize < moviesToUpdate.length) await new Promise(res => setTimeout(res, delayBetweenBatches)); // 批次间延迟
+            }
+
+            // 所有批次处理完毕，保存更新后的数组到 localStorage
+            localStorage.setItem('movies', JSON.stringify(movies));
+            renderMovies(); // 重新渲染列表以显示更新
+
+            // 恢复按钮状态并显示结果
+            fetchButton.disabled = false; fetchButton.innerHTML = originalButtonContent;
+            alert(`批量获取完成！\n共 ${counts.movies} 部电影信息被更新。\n(海报:${counts.poster}, 导演:${counts.director}, 年份:${counts.year}, 国家:${counts.country})`);
+            // 可选：自动关闭设置模态框
+            // closeModal('settingsModal');
+        }
+
+
+        // --- CSV 处理 ---
+        /**
+         * 解析 CSV 文本内容为电影对象数组。
+         * @param {string} csvText - CSV 文件内容字符串。
+         * @returns {Array<object>} - 解析后的电影对象数组。
+         * @throws {Error} - 如果 CSV 格式无效或缺少必需列。
+         */
+        function parseCSV(csvText) {
+            const rows = csvText.split('\n').filter(Boolean); // 按行分割并过滤空行
+            if (rows.length < 2) throw new Error("CSV 文件内容无效，至少需要表头和一行数据。");
+
+            // 解析表头，移除首尾引号和空格
+            const headers = rows[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+            console.log("解析到的 CSV 表头:", headers);
+
+            // 检查必需的表头是否存在
+            const requiredHeaders = ['电影/电视剧/番组', '打分日期'];
+            const missingHeaders = requiredHeaders.filter(h => !headers.includes(h));
+            if (missingHeaders.length > 0) {
+                throw new Error(`CSV 文件缺少必要的列：'${missingHeaders.join("', '")}'`);
+            }
+
+            // 创建表头到列索引的映射
+            const headerIndex = Object.fromEntries(headers.map((h, i) => [h, i]));
+            // 安全获取列值的辅助函数
+            const getColumnValue = (columns, headerName) => { const index = headerIndex[headerName]; return index !== undefined && index < columns.length ? columns[index] : ''; };
+
+            // 解析数据行
+            return rows.slice(1).map((row, rowIndex) => {
+                // 简单的 CSV 行解析逻辑
+                const columns = []; let currentVal = ''; let inQuotes = false;
+                for (let i = 0; i < row.length; i++) { const char = row[i]; if (char === '"' && (i === 0 || row[i - 1] !== '\\')) { if (inQuotes && i + 1 < row.length && row[i + 1] === '"') { currentVal += '"'; i++; } else { inQuotes = !inQuotes; } } else if (char === ',' && !inQuotes) { columns.push(currentVal.trim()); currentVal = ''; } else { currentVal += char; } } columns.push(currentVal.trim());
+                const cleanedColumns = columns.map(col => col.replace(/^"(.*)"$/, '$1').trim());
+
+                // 构建电影对象
+                const movie = { title: getColumnValue(cleanedColumns, '电影/电视剧/番组'), ratingDate: getColumnValue(cleanedColumns, '打分日期'), rating: parseFloat(getColumnValue(cleanedColumns, '个人评分')) || null, review: getColumnValue(cleanedColumns, '我的短评'), year: parseInt((getColumnValue(cleanedColumns, '上映年份') || '').match(/^\d{4}/)?.[0]) || null, country: getColumnValue(cleanedColumns, '制片国家'), link: getColumnValue(cleanedColumns, '条目链接'), director: getColumnValue(cleanedColumns, '导演'), coverUrl: getColumnValue(cleanedColumns, '海报URL') };
+
+                // 行数据校验
+                if (!movie.title || !movie.ratingDate || isNaN(new Date(movie.ratingDate).getTime())) { console.warn(`跳过 CSV 行 ${rowIndex + 2}: 缺少标题/打分日期或日期格式无效。`); return null; }
+
+                return { id: Date.now() + Math.random(), ...movie, createdAt: new Date().toISOString() };
+            }).filter(Boolean); // 过滤掉校验失败的行
+        }
+
+        /**
+         * 处理 CSV 文件导入操作。
+         */
+        async function importCSV() {
+            const fileInput = document.getElementById('modalFileInput'); const fileNameSpan = document.getElementById('modalFileName');
+            if (!fileInput.files.length) { alert('请在弹窗中选择一个 CSV 文件。'); return; }
+            const importButton = document.querySelector('#importCsvModal button[onclick="importCSV()"]'); const originalButtonContent = importButton.innerHTML; importButton.disabled = true; importButton.innerHTML = `<svg class="spinner" viewBox="0 0 24 24"><path d="M12 6v2a4 4 0 1 1-4 4H6a6 6 0 1 0 6-6z"/></svg> 导入中...`;
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                let newMoviesCount = 0, skippedCount = 0, updatedDetailsCount = 0;
+                try {
+                    const importedMovies = parseCSV(e.target.result); let existingMovies = JSON.parse(localStorage.getItem('movies') || '[]'); const moviesToAdd = [];
+                    importedMovies.forEach(newMovie => { const isDuplicate = existingMovies.some(existing => existing.title === newMovie.title && (existing.year === newMovie.year || (!existing.year && !newMovie.year))); if (!isDuplicate) moviesToAdd.push(newMovie); else skippedCount++; });
+                    newMoviesCount = moviesToAdd.length;
+                    if (newMoviesCount > 0) {
+                        const apiKeyExists = !!getTmdbApiKey(); alert(`找到 ${newMoviesCount} 部新电影${apiKeyExists ? '，将尝试获取缺失详情...' : '。未设置 API Key，不获取详情。'}`);
+                        const fetchPromises = moviesToAdd.map(async (movie) => { let detailsUpdated = false; if (apiKeyExists && (!movie.coverUrl || !movie.director || !movie.year || !movie.country)) { const details = await fetchMovieDetailsFromTmdb(movie.title); if (!movie.coverUrl && details.posterUrl) { movie.coverUrl = details.posterUrl; detailsUpdated = true; } if (!movie.director && details.director) { movie.director = details.director; detailsUpdated = true; } if (!movie.year && details.year) { movie.year = details.year; detailsUpdated = true; } if (!movie.country && details.country) { movie.country = details.country; detailsUpdated = true; } } if (detailsUpdated) updatedDetailsCount++; return movie; });
+                        const finalMoviesToAdd = await Promise.all(fetchPromises);
+                        localStorage.setItem('movies', JSON.stringify([...existingMovies, ...finalMoviesToAdd])); currentPage = 1; renderMovies(); closeModal('importCsvModal');
+                        alert(`导入完成！\n成功导入 ${newMoviesCount} 部。\n${apiKeyExists ? `其中 ${updatedDetailsCount} 部成功获取/更新了详情。\n` : ''}${skippedCount > 0 ? `跳过 ${skippedCount} 部可能重复的电影。` : ''}`);
+                    } else { alert(`导入完成。未找到新的电影数据可添加。共处理 ${importedMovies.length} 行。`); closeModal('importCsvModal'); }
+                } catch (err) { console.error("导入 CSV 时出错:", err); alert('CSV 处理失败：' + err.message); }
+                finally { fileInput.value = ''; fileNameSpan.textContent = '未选择文件'; importButton.disabled = false; importButton.innerHTML = originalButtonContent; }
+            };
+            reader.onerror = (err) => { console.error("文件读取错误:", err); alert('读取文件失败，请重试。'); importButton.disabled = false; importButton.innerHTML = originalButtonContent; };
+            reader.readAsText(fileInput.files[0], 'UTF-8');
+        }
+
+        /**
+         * 转义用于 CSV 单元格的字符串值。
+         */
+        function escapeCSVValue(v) { if (v == null) return ''; let s = String(v); if (/[",\n]/.test(s)) { s = s.replace(/"/g, '""'); s = `"${s}"`; } return s; }
+
+        /**
+         * 将所有电影数据导出为 CSV 文件。
+         */
+        function exportCSV() {
+            const movies = JSON.parse(localStorage.getItem('movies') || '[]'); if (movies.length === 0) { alert('没有电影可以导出。'); return; }
+            movies.sort((a, b) => { const dA=a.ratingDate?new Date(a.ratingDate):0;const dB=b.ratingDate?new Date(b.ratingDate):0;if(isNaN(dA)&&!isNaN(dB))return 1;if(!isNaN(dA)&&isNaN(dB))return-1;if(isNaN(dA)&&isNaN(dB))return 0;return dB-dA; });
+            const headers = ['电影/电视剧/番组', '个人评分', '打分日期', '我的短评', '上映年份', '制片国家', '条目链接', '导演', '海报URL', '内部ID', '添加日期', '最后修改日期'];
+            const rows = movies.map(m => [m.title, m.rating, m.ratingDate, m.review, m.year, m.country, m.link, m.director, m.coverUrl, m.id, m.createdAt, m.updatedAt].map(escapeCSVValue).join(','));
+            const csvString = [headers.join(','), ...rows].join('\n');
+            const blob = new Blob(['\uFEFF' + csvString], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement('a');
+            if (link.download === undefined) { alert('您的浏览器不支持自动下载。'); return; }
+            const url = URL.createObjectURL(blob); const timestamp = new Date().toISOString().slice(0, 10);
+            link.setAttribute('href', url); link.setAttribute('download', `电影收藏_${timestamp}.csv`);
+            link.style.visibility = 'hidden'; document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url);
+        }
+
+
+        // --- 电影增删改查与渲染 ---
+        /**
+         * 添加新电影（从模态框获取输入）。
+         */
+        async function addMovie(e) {
+            e.preventDefault();
+            const addButton = document.querySelector('#addMovieBtnInModal'); const originalButtonContent = addButton.innerHTML;
+            const title = document.getElementById('modalTitle').value.trim(); const rating = parseFloat(document.getElementById('modalRating').value) || null;
+            const ratingDate = document.getElementById('modalRatingDate').value; const review = document.getElementById('modalReview').value.trim();
+            if (!title) { alert('电影名称不能为空！'); return; } if (!ratingDate) { alert('打分日期不能为空！ (用于排序)'); return; } if (isNaN(new Date(ratingDate).getTime())) { alert('打分日期格式无效！'); return; }
+            addButton.disabled = true; addButton.innerHTML = `<svg class="spinner" viewBox="0 0 24 24"><path d="M12 6v2a4 4 0 1 1-4 4H6a6 6 0 1 0 6-6z"/></svg> 处理中...`;
+            let fetchedDetails = { posterUrl: null, director: null, year: null, country: null };
+            try {
+                if (getTmdbApiKey()) { addButton.innerHTML = `<svg class="spinner" viewBox="0 0 24 24"><path d="M12 6v2a4 4 0 1 1-4 4H6a6 6 0 1 0 6-6z"/></svg> 获取详情...`; fetchedDetails = await fetchMovieDetailsFromTmdb(title); }
+                const movie = { id: Date.now() + Math.random(), title, rating, ratingDate, review, director: fetchedDetails.director || '', year: fetchedDetails.year || null, country: fetchedDetails.country || '', coverUrl: fetchedDetails.posterUrl || '', link: '', createdAt: new Date().toISOString() };
+                const movies = JSON.parse(localStorage.getItem('movies') || '[]'); movies.push(movie); localStorage.setItem('movies', JSON.stringify(movies));
+                currentPage = 1; renderMovies(); document.getElementById('addMovieFormModal').reset(); closeModal('addMovieModal'); alert('添加成功！');
+            } catch (err) { console.error("添加电影时出错:", err); alert("添加电影时发生错误。"); }
+            finally { addButton.disabled = false; addButton.innerHTML = originalButtonContent; }
+        }
+
+        /**
+         * 渲染电影列表及分页。
+         */
+        function renderMovies() {
+            let movies = JSON.parse(localStorage.getItem('movies') || '[]');
+            const container = document.getElementById('movieList'); container.innerHTML = '';
+            document.getElementById('movieCount').textContent = movies.length;
+
+            // 1. 按打分日期降序排序
+            movies.sort((a, b) => { const dA=a.ratingDate?new Date(a.ratingDate):0;const dB=b.ratingDate?new Date(b.ratingDate):0;if(isNaN(dA)&&!isNaN(dB))return 1;if(!isNaN(dA)&&isNaN(dB))return-1;if(isNaN(dA)&&isNaN(dB))return 0;return dB-dA; });
+
+            // 2. 分页逻辑
+            const totalMovies = movies.length; const totalPages = Math.ceil(totalMovies / moviesPerPage);
+            if (currentPage > totalPages && totalPages > 0) currentPage = totalPages; else if (currentPage < 1) currentPage = 1;
+            document.getElementById('currentPage').textContent = currentPage; document.getElementById('totalPages').textContent = totalPages > 0 ? totalPages : 1;
+            document.getElementById('prevPage').disabled = currentPage === 1; document.getElementById('nextPage').disabled = currentPage === totalPages || totalMovies === 0;
+            document.getElementById('jumpPage').max = totalPages > 0 ? totalPages : 1;
+            document.getElementById('pagination').style.display = totalMovies > 0 ? 'flex' : 'none';
+
+            // 3. 空列表处理
+            if (totalMovies === 0) { container.innerHTML = '<p class="empty-message">这里空空如也，快添加你的第一部电影吧！</p>'; document.getElementById('selectAll').checked=false; checkSelectedMovies(); return; }
+
+            // 4. 渲染卡片
+            const startIndex = (currentPage - 1) * moviesPerPage; const endIndex = Math.min(startIndex + moviesPerPage, totalMovies);
+            const currentPageMovies = movies.slice(startIndex, endIndex);
+            currentPageMovies.forEach((m, index) => {
+                const el = document.createElement('div'); el.className = 'movie-item'; el.style.animationDelay = `${0.05 + index * 0.03}s`;
+                const rating = typeof m.rating === 'number' ? m.rating.toFixed(1) : null;
+                const added = m.createdAt ? new Date(m.createdAt).toLocaleDateString('zh-CN',{year:'2-digit',month:'2-digit',day:'2-digit'}) : '?'; // 日期格式调整为本地化
+                const cover = m.coverUrl || DEFAULT_POSTER_URL;
+                // 辅助函数创建 Meta HTML
+                const createMetaItem = (iconPath, title, value) => value ? `<div class="meta-item" title="${title}: ${value}"><svg viewBox="0 0 24 24"><path d="${iconPath}"/></svg><span>${value}</span></div>` : '';
+                // 构建 Meta HTML 字符串 (路径已缩短以便阅读，实际应为完整 SVG path d="..." )
+                const metaHTML = `${rating ? `<div class="movie-rating-display" title="个人评分 ${rating}"><svg viewBox="0 0 24 24"><path d="M12 17..."/></svg><span>${rating}</span></div>` : '<div class="movie-rating-display placeholder">未评分</div>'} ${createMetaItem("M19 3h...", "上映年份", m.year)} ${createMetaItem("M12 12c...", "导演", m.director)} ${createMetaItem("M12 2C...", "国家/地区", m.country)} ${createMetaItem("M11.99 2C...", "打分日期", m.ratingDate)}`;
+                // 构建按钮 HTML
+                const linkBtn = m.link ? `<a href="${m.link}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-small" title="查看链接"><svg viewBox="0 0 24 24"><path d="M3.9 12c..."/></svg> 链接</a>` : '';
+                const editBtn = `<button class="btn btn-outline btn-small" onclick="editMovie('${m.id}')" title="编辑"><svg viewBox="0 0 24 24"><path d="M3 17..."/></svg> 编辑</button>`;
+                const deleteBtn = `<button class="btn btn-outline btn-small" onclick="deleteMovie('${m.id}')" title="删除"><svg viewBox="0 0 24 24"><path d="M6 19c..."/></svg> 删除</button>`;
+                // 填充卡片内容
+                el.innerHTML = `<div class="checkbox-container"><input type="checkbox" class="movie-checkbox" data-id="${m.id}" title="选择"></div><div class="movie-item-poster"><img src="${cover}" alt="${m.title} 海报" loading="lazy" onerror="this.onerror=null; this.src='${DEFAULT_POSTER_URL}';"></div><div class="movie-item-content"><h3 class="movie-title" title="${m.title}">${m.title}</h3><div class="movie-details-grid">${metaHTML}</div>${m.review ? `<p class="movie-review" title="短评">${m.review}</p>` : ''}<div class="movie-actions"><small class="movie-date" title="添加日期">添加:${added}</small><div class="action-buttons"> ${linkBtn} ${editBtn} ${deleteBtn} </div></div></div>`;
+                container.appendChild(el);
+            });
+            checkSelectedMovies(); // 更新全选和删除菜单项状态
+        }
+
+        /**
+         * 删除指定 ID 的电影。
+         */
+        function deleteMovie(id) {
+            if (!confirm('确定要删除这部电影吗？')) return;
+            let movies = JSON.parse(localStorage.getItem('movies') || '[]');
+            const len = movies.length; movies = movies.filter(m => String(m.id) !== String(id));
+            if (movies.length < len) {
+                localStorage.setItem('movies', JSON.stringify(movies));
+                const pages = Math.ceil(movies.length / moviesPerPage); if (currentPage > pages) currentPage = pages > 0 ? pages : 1;
+                renderMovies(); alert('已删除。');
+            } else { alert('未找到要删除的电影。'); }
+        }
+
+        /**
+         * 删除所有选中的电影（或全部电影，如果“全选”被勾选）。
+         */
+        function deleteSelectedMovies() {
+            const allChecked = document.getElementById('selectAll').checked;
+            const selectedBoxes = document.querySelectorAll('.movie-checkbox:checked');
+            let movies = JSON.parse(localStorage.getItem('movies') || '[]');
+            const totalCount = movies.length;
+
+            if (allChecked && totalCount > 0) {
+                if (!confirm(`确定要删除全部 ${totalCount} 部电影吗？此操作不可撤销！`)) return;
+                localStorage.setItem('movies', '[]'); currentPage = 1; alert(`已删除全部 ${totalCount} 部电影。`);
+            } else if (selectedBoxes.length > 0) {
+                const idsToDelete = Array.from(selectedBoxes).map(cb => String(cb.dataset.id));
+                const countToDelete = idsToDelete.length;
+                if (!confirm(`确定要删除选中的 ${countToDelete} 部电影吗？`)) return;
+                movies = movies.filter(m => !idsToDelete.includes(String(m.id)));
+                localStorage.setItem('movies', JSON.stringify(movies));
+                const pages = Math.ceil(movies.length / moviesPerPage); if (currentPage > pages) currentPage = pages > 0 ? pages : 1;
+                alert(`已删除 ${countToDelete} 部电影。`);
+            } else {
+                alert('请先选择要删除的电影，或勾选“全选”。'); return;
+            }
+            document.getElementById('selectAll').checked = false; renderMovies();
+        }
+
+        /**
+         * 打开编辑模态框并填充数据。
+         */
+        function editMovie(id) {
+            const movies = JSON.parse(localStorage.getItem('movies'));
+            const movie = movies.find(m => String(m.id) === String(id));
+            if (!movie) { alert('未找到电影信息。'); return; }
+            document.getElementById('editMovieId').value = movie.id;
+            document.getElementById('editTitle').value = movie.title || '';
+            document.getElementById('editDirector').value = movie.director || '';
+            document.getElementById('editYear').value = movie.year || '';
+            document.getElementById('editRating').value = movie.rating || '';
+            document.getElementById('editRatingDate').value = movie.ratingDate || '';
+            document.getElementById('editCountry').value = movie.country || '';
+            document.getElementById('editLink').value = movie.link || '';
+            document.getElementById('editCoverUrl').value = movie.coverUrl || '';
+            document.getElementById('editReview').value = movie.review || '';
+            openModal('editMovieModal');
+        }
+
+        /**
+         * 关闭编辑模态框（现在使用通用函数）。
+         */
+        function closeEditModal() {
+            closeModal('editMovieModal');
+        }
+
+        /**
+         * 保存编辑模态框中的修改。
+         * 注意：打分日期只有在输入了有效新日期时才更新，否则保留原值。
+         */
+        function saveMovieEdit() {
+            const movieId = document.getElementById('editMovieId').value; if (!movieId) return;
+            const movies = JSON.parse(localStorage.getItem('movies')); const movieIndex = movies.findIndex(m => String(m.id) === String(movieId));
+            if (movieIndex === -1) { alert('更新失败，未找到电影。'); closeModal('editMovieModal'); return; }
+
+            const updatedTitle = document.getElementById('editTitle').value.trim();
+            const newRatingDateInput = document.getElementById('editRatingDate').value;
+            let ratingDateToSave = movies[movieIndex].ratingDate; // 默认保留原日期
+
+            if (!updatedTitle) { alert('电影名称不能为空！'); return; }
+            if (newRatingDateInput) { // 如果用户输入了日期
+                if (isNaN(new Date(newRatingDateInput).getTime())) { alert('输入的打分日期格式无效！请使用 YYYY-MM-DD 格式，或留空以保留原日期。'); return; }
+                ratingDateToSave = newRatingDateInput; // 格式有效，使用新日期
+            }
+
+            // 更新电影对象
+            movies[movieIndex] = { ...movies[movieIndex],
+                title: updatedTitle, director:document.getElementById('editDirector').value.trim(),
+                year:parseInt(document.getElementById('editYear').value)||null, rating:parseFloat(document.getElementById('editRating').value)||null,
+                ratingDate: ratingDateToSave, // 保存最终决定的日期
+                country:document.getElementById('editCountry').value.trim(), link:document.getElementById('editLink').value.trim(),
+                coverUrl:document.getElementById('editCoverUrl').value.trim(), review:document.getElementById('editReview').value.trim(),
+                updatedAt:new Date().toISOString() };
+            localStorage.setItem('movies',JSON.stringify(movies));
+            closeModal('editMovieModal'); renderMovies(); alert('更新成功！');
+        }
+
+
+        // --- 模态框与下拉菜单控制 ---
+        /**
+         * 打开指定 ID 的模态框。
+         * @param {string} modalId - 模态框元素的 ID。
+         */
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) { modal.classList.add('active'); document.body.style.overflow = 'hidden'; }
+            else { console.error(`未找到 ID 为 "${modalId}" 的模态框。`); }
+        }
+        /**
+         * 关闭指定 ID 的模态框。
+         * @param {string} modalId - 模态框元素的 ID。
+         */
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) { modal.classList.remove('active'); if (!document.querySelector('.modal-overlay.active')) { document.body.style.overflow = ''; } }
+        }
+
+        let isDropdownOpen = false; // 标记下拉菜单是否打开
+        const manageMenuBtn = document.getElementById('manageMenuBtn');       // 管理按钮
+        const manageMenuDropdown = document.getElementById('manageMenuDropdown'); // 下拉菜单
+        /**
+         * 切换管理下拉菜单的显示/隐藏状态。
+         */
+        function toggleDropdown() { isDropdownOpen = !isDropdownOpen; manageMenuDropdown.classList.toggle('active'); manageMenuBtn.setAttribute('aria-expanded', isDropdownOpen); }
+        /**
+         * 关闭管理下拉菜单。
+         */
+        function closeDropdown() { if (isDropdownOpen) { isDropdownOpen = false; manageMenuDropdown.classList.remove('active'); manageMenuBtn.setAttribute('aria-expanded', isDropdownOpen); } }
+
+        // --- UI & 分页 ---
+        /**
+         * 应用电影卡片入场动画。
+         */
+        function animateCards() { const cards=document.querySelectorAll('.movie-item'); cards.forEach((c,i)=>{c.style.opacity='0';c.style.transform='translateY(10px)';requestAnimationFrame(()=>{c.style.transition=`all 0.3s ease-out ${i*0.03}s`;c.style.opacity='1';c.style.transform='translateY(0)';});}); }
+        /**
+         * 跳转到下一页。
+         */
+        function goToNextPage() { const pages=Math.ceil(JSON.parse(localStorage.getItem('movies')||'[]').length/moviesPerPage); if(currentPage<pages){currentPage++;renderMovies();window.scrollTo({top:document.querySelector('#my-collection-section')?.offsetTop-20||0,behavior:'smooth'});} }
+        /**
+         * 跳转到上一页。
+         */
+        function goToPrevPage() { if(currentPage>1){currentPage--;renderMovies();window.scrollTo({top:document.querySelector('#my-collection-section')?.offsetTop-20||0,behavior:'smooth'});} }
+        /**
+         * 跳转到指定页码。
+         */
+        function jumpToPage() { const input=document.getElementById('jumpPage');const num=parseInt(input.value);const pages=Math.ceil(JSON.parse(localStorage.getItem('movies')||'[]').length/moviesPerPage); if(!isNaN(num)&&num>=1&&num<=pages){currentPage=num;renderMovies();input.value='';window.scrollTo({top:document.querySelector('#my-collection-section')?.offsetTop-20||0,behavior:'smooth'});}else{alert(`请输入 1 到 ${pages} 之间的页码！`);input.value='';}}
+        /**
+         * 处理“全选”复选框的变化。
+         */
+        function handleSelectAll() { const chk=document.getElementById('selectAll').checked; document.querySelectorAll('.movie-checkbox').forEach(c=>c.checked=chk); checkSelectedMovies(); }
+        /**
+         * 检查选中状态，更新“全选”和“删除选中”菜单项。
+         */
+        function checkSelectedMovies() {
+            const selectedCheckboxes = document.querySelectorAll('.movie-checkbox:checked');
+            const totalCheckboxes = document.querySelectorAll('.movie-checkbox');
+            const deleteMenuItem = document.getElementById('deleteSelectedMenuItem'); // 获取菜单项
+            const selectedCount = selectedCheckboxes.length;
+            const totalCount = totalCheckboxes.length;
+            // 更新“删除选中”菜单项的禁用状态
+            if (deleteMenuItem) { if (selectedCount > 0) { deleteMenuItem.classList.remove('dropdown-item-disabled'); } else { deleteMenuItem.classList.add('dropdown-item-disabled'); } }
+            // 更新“全选”复选框的状态
+            document.getElementById('selectAll').checked = totalCount > 0 && selectedCount === totalCount;
+        }
+        /**
+         * 从添加电影模态框打开豆瓣搜索。
+         */
+        function searchDoubanFromModal() {
+            const titleInput = document.getElementById('modalTitle'); // 获取模态框内的标题输入
+            const title = titleInput.value.trim();
+            if (!title) { alert('请先在模态框中输入电影名称。'); return; }
+            window.open(`https://search.douban.com/movie/subject_search?search_text=${encodeURIComponent(title)}`, '_blank');
+        }
+
+        // --- 初始化 ---
+        /**
+         * 页面加载完成后执行的初始化函数。
+         */
+        function init() {
+            initStorage(); // 初始化存储
+            renderMovies(); // 渲染初始列表
+            animateCards(); // 应用初始动画
+
+            // --- 绑定事件监听器 ---
+            document.getElementById('nextPage')?.addEventListener('click', goToNextPage);
+            document.getElementById('prevPage')?.addEventListener('click', goToPrevPage);
+            document.getElementById('selectAll')?.addEventListener('change', handleSelectAll);
+            // 删除选中按钮现在是菜单项，点击事件在 HTML 的 onclick 中处理
+            document.getElementById('movieList')?.addEventListener('change', (e) => { if (e.target.matches('.movie-checkbox')) checkSelectedMovies(); });
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { const activeModal = document.querySelector('.modal-overlay.active'); if (activeModal) closeModal(activeModal.id); else closeDropdown(); } });
+            document.body.addEventListener('click', (e) => { if (e.target.classList.contains('modal-overlay')) closeModal(e.target.id); if (manageMenuBtn && manageMenuDropdown && !manageMenuBtn.contains(e.target) && !manageMenuDropdown.contains(e.target)) closeDropdown(); });
+            document.getElementById('modalFileInput')?.addEventListener('change', (e) => { document.getElementById('modalFileName').textContent = e.target.files[0]?.name || '未选择文件'; });
+            manageMenuBtn?.addEventListener('click', toggleDropdown);
+
+            // --- 初始化 UI 状态 ---
+            document.getElementById('currentDate').textContent = new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric'});
+            if(getTmdbApiKey()){document.getElementById('modalTmdbApiKey').placeholder="API Key 已保存";}
+            checkSelectedMovies(); // 初始检查选中状态
+        }
+        // 页面加载完成后执行初始化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+
+</body>
+</html>
