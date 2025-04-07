@@ -47,18 +47,18 @@
 
 /* --- 全局重置与字体 --- */
 * { margin: 0; padding: 0; box-sizing: border-box; }
-@font-face { font-family: 'Cyberpunk'; src: local('Rajdhani'), local('Orbitron'), local('Segoe UI'), sans-serif; /* 添加 sans-serif 作为最终后备 */ }
+@font-face { font-family: 'Cyberpunk'; src: local('Rajdhani'), local('Orbitron'), local('Segoe UI')， sans-serif; /* 添加 sans-serif 作为最终后备 */ }
 
 /* --- Body 与背景效果 --- */
 body {
-    font-family: 'Cyberpunk', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-    background: linear-gradient(140deg, var(--dark) 10%, var(--dark-accent) 90%); /* 调整渐变角度和比例 */
+    font-family: 'Cyberpunk', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei'， sans-serif;
+    background: linear-gradient(140deg， var(--dark) 10%， var(--dark-accent) 90%); /* 调整渐变角度和比例 */
     /* 叠加更精细的背景纹理 */
     background-image:
-        linear-gradient(140deg, var(--dark) 10%, var(--dark-accent) 90%),
+        linear-gradient(140deg， var(--dark) 10%， var(--dark-accent) 90%),
         /* 细微噪点 */
         url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%239C92AC' fill-opacity='0.06' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E"),
-        repeating-linear-gradient(135deg, var(--grid-line) 0px, var(--grid-line) 1px, transparent 1px, transparent 30px), /* 调整网格间距 */
+        repeating-linear-gradient(135deg， var(--grid-line) 0px， var(--grid-line) 1px， transparent 1px， transparent 30px), /* 调整网格间距 */
         repeating-linear-gradient(45deg, var(--grid-line) 0px, var(--grid-line) 1px, transparent 1px, transparent 30px);
     color: var(--light);
     line-height: 1.6; /* 减少行高 */
